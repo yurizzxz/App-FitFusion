@@ -13,7 +13,7 @@ import {
 
 const imgbg = "../assets/images/bgfundo2.png";
 
-export default function login() {
+export default function Login() {
 
   return (
     <View style={styles.imgContainer}>
@@ -31,7 +31,9 @@ export default function login() {
               
             />
           </View>
+        
           <View style={styles.containerInput}>
+          <Text style={styles.welcomeText}>Bem Vindo Novamente!</Text>
             <TextInput
               style={styles.input}
               placeholder="Endereço de email"
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -55,
+    top: -40,
     justifyContent: "center",
   },
   containerLogo: {
@@ -97,17 +99,25 @@ const styles = StyleSheet.create({
     height: 100,
   },
   containerInput: {
-    top: 0,
+    top: -10,
     alignItems: "center",
     justifyContent: "center",
     width: "90%",
   },
 
+  welcomeText: {
+    color: "#Fff",
+    marginBottom: 20,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+
   input: {
     backgroundColor: "#191919",
-    width: "90%",
-    marginTop: 1.7,
+    width: "98%",
+    marginBottom: 10,
     borderWidth: 1,
+    borderRadius: 5,
     borderColor: "#252525",
     height: 53,
     color: "#707070",
@@ -117,9 +127,10 @@ const styles = StyleSheet.create({
   },
   btnSubmit: {
     backgroundColor: "#00BB83",
-    marginTop: 3,
-    width: "90%",
+    marginTop: 1,
+    width: "98%",
     padding: 15,
+    borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
   },

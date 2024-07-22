@@ -15,7 +15,7 @@ import {
 
 const imgbg = "../assets/images/bgfundo2.png";
 
-export default function cadastro() {
+export default function Cadastro() {
   return (
     <View style={styles.imgContainer}>
       <ImageBackground
@@ -25,13 +25,15 @@ export default function cadastro() {
       >
       <KeyboardAvoidingView style={styles.background}>
         <View style={styles.configContainer}>
-          <View style={styles.containerLogo}>
-            
-            <Text style={{fontSize: 25, fontWeight: "bold", color: "white"}}>Cadastrar</Text>
+        <View style={styles.containerLogo}>
+            <Image
+              style={styles.logoLogin}
+              source={require("../assets/images/logo2.png")}
               
-            
+            />
           </View>
           <View style={styles.containerInput}>
+          <Text style={styles.welcomeText}>Cadastre-se ao FitFusion!</Text>
           <TextInput
               style={styles.input}
               placeholder="Digite seu nome"
@@ -60,7 +62,7 @@ export default function cadastro() {
               <View style={styles.textsContainer}>
                 <Text style={styles.textTextstyle}>
                   Já possui uma conta?
-                  <Text style={styles.registrarText}>Entrar</Text>
+                  <Text style={styles.registrarText}> Entrar</Text>
                 </Text>
               </View>
             </TouchableOpacity>
@@ -91,11 +93,11 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -40,
+    top: -50,
     justifyContent: "center",
   },
   containerLogo: {
-    bottom: 25,
+    bottom: 10,
     justifyContent: "center",
   },
   logoLogin: {
@@ -109,23 +111,32 @@ const styles = StyleSheet.create({
     width: "90%",
   },
 
+  welcomeText: {
+    color: "#Fff",
+    marginBottom: 25,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+
   input: {
     backgroundColor: "#191919",
-    width: "90%",
-    marginTop: 1.7,
+    width: "98%",
+    marginBottom: 10,
     borderWidth: 1,
+    borderRadius: 5,
     borderColor: "#252525",
     height: 53,
-    color: "white",
+    color: "#707070",
     fontSize: 17,
     padding: 0,
     textAlign: "center",
   },
   btnSubmit: {
-    backgroundColor: "#00ffd3",
-    marginTop: 3,
-    width: "90%",
+    backgroundColor: "#00BB83",
+    marginTop: 1,
+    width: "98%",
     padding: 15,
+    borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -141,7 +152,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   registrarText: {
-    color: "#00ffd3",
+    color: "#00BB83",
   },
   textsContainer: {
     alignItems: "center",

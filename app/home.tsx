@@ -14,8 +14,9 @@ import {
 
 const imgbg = "../assets/images/bgfundo2.png";
 
-export default function home() {
+export default function Home() {
   return (
+    
     <View style={styles.imgContainer}>
       <ImageBackground source={require(imgbg)} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
