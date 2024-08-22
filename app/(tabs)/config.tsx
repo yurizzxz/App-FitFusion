@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 import {
   View,
@@ -14,8 +13,8 @@ import {
 } from "react-native";
 
 const { width, height } = Dimensions.get("window");
-const imgbg = "../assets/images/bgfundo2.png";
-const imgbg1 = "../assets/images/bgfundo2.png";
+const imgbg = "../../assets/images/bgfundo2.png";
+const imgbg1 = "../../assets/images/bgfundo2.png";
 
 export default function Config() {
   return (
@@ -62,7 +61,7 @@ export default function Config() {
                       style={styles.input}
                       placeholder="Digite sua senha"
                       autoCorrect={false}
-                      onChangeText={() => {}}
+                      onChangeText={() => {}} secureTextEntry 
                     />
                   </View>
                   <Text style={styles.label}>Confirme sua nova senha</Text>
@@ -71,7 +70,7 @@ export default function Config() {
                       style={styles.input}
                       placeholder="Digite sua senha"
                       autoCorrect={false}
-                      onChangeText={() => {}}
+                      onChangeText={() => {}} secureTextEntry 
                     />
                   </View>
                   <View style={styles.formContent}>

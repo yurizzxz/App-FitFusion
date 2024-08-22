@@ -1,37 +1,51 @@
 import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
+
 import {
   View,
   KeyboardAvoidingView,
   Image,
-  TextInput,
+  Dimensions,
   Text,
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
 } from "react-native";
+import { useRouter } from "expo-router";
+import useCustomFonts from "../assets/fonts/fonts"; 
 
 const imgbg = "../assets/images/bgfundo2.png";
+const { width } = Dimensions.get("window");
+
 
 export default function Begin() {
+  /* fonte */
+  const fontsLoaded = useCustomFonts();
+  /* rota */
+  const router = useRouter();
+  const goCadastro = () => {
+    router.push("/cadastro");
+  };
+
+  const goLogin = () => {
+    router.push("/login");
+  };
   return (
     <View style={styles.imgContainer}>
       <ImageBackground source={require(imgbg)} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
           <View style={styles.configContainer}>
-          <Text style={styles.headline}>O APLICATIVO FITNESS PERFEITO!</Text>
-          <TouchableOpacity style={styles.btnSubmit}>
+            <Text style={styles.headline}>O APLICATIVO FITNESS PERFEITO!</Text>
+            <TouchableOpacity style={styles.btnSubmit} onPress={goCadastro}>
               <Text style={styles.submitText}>Começar</Text>
             </TouchableOpacity>
-          <TouchableOpacity style={styles.btnRegistrar}>
-                <View style={styles.textsContainer}>
-                  <Text style={styles.textTextstyle}>
-                    Já possui uma conta?
-                    <Text style={styles.registrarText}> Entrar</Text>
-                  </Text>
-                </View>
-              </TouchableOpacity>
+            <TouchableOpacity style={styles.btnRegistrar} onPress={goLogin}>
+              <View style={styles.textsContainer}>
+                <Text style={styles.textTextstyle}>
+                  Já possui uma conta?
+                  <Text style={styles.registrarText}> Entrar</Text>
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </ImageBackground>
@@ -57,16 +71,17 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    padding: 35,
+    padding: width > 400 ? 15 : 10,
     top: -50,
     justifyContent: "center",
   },
 
-  headline:{
-    fontSize: 40,
+  headline: {
+    fontFamily: "Anton",
+    fontSize: width > 400 ? 58 : width > 350 ? 50 : 44,
     color: "#fff",
     textAlign: "center",
-    lineHeight: 45,
+    lineHeight: width > 400 ? 63 : width > 350 ? 55 : 49,
     marginBottom: 20,
     fontWeight: "bold",
   },
@@ -103,7 +118,7 @@ const styles = StyleSheet.create({
   },
   textTextstyle: {
     color: "#fff",
-    fontSize: 16,
+    fontSize:  width > 400 ? 18 : width > 350 ? 16 : 14,
     fontWeight: "bold",
   },
 });

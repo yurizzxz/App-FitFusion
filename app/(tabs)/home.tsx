@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-
 import {
   View,
   KeyboardAvoidingView,
   Image,
+  Dimensions,
   TextInput,
   Text,
   TouchableOpacity,
@@ -12,11 +12,11 @@ import {
   ImageBackground,
 } from "react-native";
 
-const imgbg = "../assets/images/bgfundo2.png";
+const { width } = Dimensions.get("window");
+const imgbg = "../../assets/images/bgfundo2.png";
 
 export default function Home() {
   return (
-    
     <View style={styles.imgContainer}>
       <ImageBackground source={require(imgbg)} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
@@ -24,7 +24,7 @@ export default function Home() {
             <View style={styles.containerLogo}>
               <Image
                 style={styles.logoLogin}
-                source={require("../assets/images/logo2.png")}
+                source={require("../../assets/images/logo2.png")}
               />
             </View>
             <View style={styles.configctnerhome}>
@@ -36,10 +36,14 @@ export default function Home() {
                 detalhadamente seus treinos.
               </Text>
 
-              <TouchableOpacity style={styles.btnbuttons}>
-                <Text style={[styles.treinar, styles.texto]}>Treinos</Text>
-                <Text style={[styles.dicas, styles.texto]}>Dicas</Text>
-              </TouchableOpacity>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={[styles.button, styles.trainButton]}>
+                  <Text style={styles.buttonText}>Treinos</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.tipsButton]}>
+                  <Text style={styles.buttonText}>Dicas</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -65,8 +69,9 @@ const styles = StyleSheet.create({
   },
   configContainer: {
     width: "100%",
+    padding: 20,
     alignItems: "center",
-    top: -80,
+    top: -70,
     justifyContent: "center",
   },
   containerLogo: {
@@ -74,8 +79,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logoLogin: {
-    width: 200,
-    height: 100,
+    width: width > 350 ? 200 : 175,
+    height: width > 350 ? 75 : 75,
     borderWidth: 0,
   },
 
@@ -88,9 +93,10 @@ const styles = StyleSheet.create({
   },
 
   headLine: {
-    fontSize: 45,
+    fontSize: width > 350 ? 45 : 40,
     fontWeight: "bold",
     color: "#fff",
+    textAlign: "center",
   },
 
   span: {
@@ -98,46 +104,36 @@ const styles = StyleSheet.create({
   },
 
   contenthome: {
-    width: 330,
-    top: 10,
-    color: "white",
+    width: "100%",
+    color: "#fff",
     textAlign: "center",
-    fontSize: 15,
-    fontWeight: "bold",
+    fontSize: width > 350 ? 18 : 14, 
   },
 
   //buttons
 
-  btnbuttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    top: 40,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    top: 10
   },
-  treinar: {
-    fontSize: 25,
-    height: 50,
-    textAlign: "center",
-    fontWeight: "bold",
-    color: "white",
-    backgroundColor: "#00BB83",
-    paddingTop: 7.5,
-    paddingBottom: 7.5,
-    paddingLeft: 35,
-    paddingRight: 35,
+  button: {
+    flex: 1,
+    marginHorizontal: 5,
+    paddingVertical: 10,
+    borderRadius: 5,
   },
-  dicas: {
-    fontSize: 25,
-    color: "white",
-    textAlign: "center",
-    backgroundColor: "#1E1E1E",
-    fontWeight: "bold",
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 40,
-    paddingRight: 40,
+  trainButton: {
+    backgroundColor: '#00BB83',
   },
-
-  texto: {
-    marginHorizontal: 4,
+  tipsButton: {
+    backgroundColor: '#1E1E1E',
+  },
+  buttonText: {
+    fontSize: width > 350 ? 25 : 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });

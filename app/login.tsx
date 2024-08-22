@@ -10,10 +10,16 @@ import {
   StyleSheet,
   ImageBackground,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 const imgbg = "../assets/images/bgfundo2.png";
 
 export default function Login() {
+ /* rota */
+ const router = useRouter();
+ const goCadastro = () => {
+   router.push("/cadastro");
+ };
 
   return (
     <View style={styles.imgContainer}>
@@ -52,7 +58,7 @@ export default function Login() {
               <Text style={styles.submitText}>ENTRAR</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.btnRegistrar}>
+            <TouchableOpacity style={styles.btnRegistrar} onPress={goCadastro}>
               <View style={styles.textsContainer}>
                 <Text style={styles.textTextstyle}>
                   Não tem uma conta?
@@ -87,7 +93,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -40,
+    top: -35,
     justifyContent: "center",
   },
   containerLogo: {
@@ -120,7 +126,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "#252525",
     height: 53,
-    color: "#707070",
+    color: "#fff",
     fontSize: 17,
     padding: 0,
     textAlign: "center",

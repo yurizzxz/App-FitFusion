@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
 
 import {
   View,
@@ -12,10 +10,17 @@ import {
   StyleSheet,
   ImageBackground,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 const imgbg = "../assets/images/bgfundo2.png";
 
 export default function Cadastro() {
+  /* rota */
+  const router = useRouter();
+  const goLogin = () => {
+    router.push("/login");
+  };
+ 
   return (
     <View style={styles.imgContainer}>
       <ImageBackground
@@ -58,10 +63,10 @@ export default function Cadastro() {
               <Text style={styles.submitText}>ENTRAR</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.btnRegistrar}>
+            <TouchableOpacity style={styles.btnRegistrar} onPress={goLogin}>
               <View style={styles.textsContainer}>
                 <Text style={styles.textTextstyle}>
-                  Já possui uma conta?
+                  Já possui uma conta? 
                   <Text style={styles.registrarText}> Entrar</Text>
                 </Text>
               </View>
@@ -93,7 +98,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -50,
+    top: -45,
     justifyContent: "center",
   },
   containerLogo: {
@@ -126,7 +131,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "#252525",
     height: 53,
-    color: "#707070",
+    color: "#fff",
     fontSize: 17,
     padding: 0,
     textAlign: "center",
