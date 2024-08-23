@@ -40,13 +40,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#00BB83",
     height: "100%",
   },
- 
-
   background: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-
   },
   configContainer: {
     width: "100%",

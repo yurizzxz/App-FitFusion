@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -45,
+    top: -15,
     justifyContent: "center",
   },
   containerLogo: {
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: "#252525",
-    height: 53,
+    height: 50,
     color: "#fff",
     fontSize: 17,
     padding: 0,

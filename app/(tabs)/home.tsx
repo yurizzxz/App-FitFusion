@@ -11,11 +11,20 @@ import {
   StyleSheet,
   ImageBackground,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
 
 export default function Home() {
+  /* rota */
+ const router = useRouter();
+ const goTreinos = () => {
+   router.push("/treinos");
+ };
+ const goArtigos = () => {
+   router.push("/artigos");
+ };
   return (
     <View style={styles.imgContainer}>
       <ImageBackground source={require(imgbg)} style={styles.imgBack}>
@@ -37,10 +46,10 @@ export default function Home() {
               </Text>
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, styles.trainButton]}>
+                <TouchableOpacity style={[styles.button, styles.trainButton]} onPress={goTreinos}>
                   <Text style={styles.buttonText}>Treinos</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.tipsButton]}>
+                <TouchableOpacity style={[styles.button, styles.tipsButton]} onPress={goArtigos}>
                   <Text style={styles.buttonText}>Dicas</Text>
                 </TouchableOpacity>
               </View>
@@ -69,13 +78,13 @@ const styles = StyleSheet.create({
   },
   configContainer: {
     width: "100%",
-    padding: 20,
+    
     alignItems: "center",
-    top: -70,
+    top: -35,
     justifyContent: "center",
   },
   containerLogo: {
-    bottom: 20,
+    bottom: 10,
     justifyContent: "center",
   },
   logoLogin: {
@@ -87,6 +96,7 @@ const styles = StyleSheet.create({
   //text config
 
   configctnerhome: {
+    paddingHorizontal: 25,
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
@@ -104,10 +114,11 @@ const styles = StyleSheet.create({
   },
 
   contenthome: {
+    maxWidth: 350,
     width: "100%",
     color: "#fff",
     textAlign: "center",
-    fontSize: width > 350 ? 18 : 14, 
+    fontSize: width > 350 ? 14 : 14, 
   },
 
   //buttons

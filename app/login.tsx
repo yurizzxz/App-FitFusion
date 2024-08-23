@@ -20,6 +20,9 @@ export default function Login() {
  const goCadastro = () => {
    router.push("/cadastro");
  };
+ const goHome = () => {
+  router.push("/(tabs)/home");
+};
 
   return (
     <View style={styles.imgContainer}>
@@ -54,7 +57,7 @@ export default function Login() {
               onChangeText={() => {}}
             />
 
-            <TouchableOpacity style={styles.btnSubmit}>
+            <TouchableOpacity style={styles.btnSubmit} onPress={goHome}>
               <Text style={styles.submitText}>ENTRAR</Text>
             </TouchableOpacity>
 
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -35,
+    top: -10,
     justifyContent: "center",
   },
   containerLogo: {
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: "#252525",
-    height: 53,
+    height: 50,
     color: "#fff",
     fontSize: 17,
     padding: 0,

@@ -18,13 +18,13 @@ const imgbg1 = "../../assets/images/bgfundo2.png";
 
 export default function Config() {
   return (
-    <View style={styles.imgContainer}>
+    <View>
       <ImageBackground source={require(imgbg)} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
           <View style={styles.configContainer}>
             <View style={styles.contentpage}>
               <View style={styles.row}>
-                <View style={[styles.cardContainer, {}]}>
+                <View style={styles.cardContainer}>
                   <Image source={require(imgbg1)} style={[styles.card]}></Image>
                   <View style={styles.usersInfo}>
                     <Text style={styles.cardText}>Musculação</Text>
@@ -68,7 +68,7 @@ export default function Config() {
                   <View style={styles.formContent}>
                     <TextInput
                       style={styles.input}
-                      placeholder="Digite sua senha"
+                      placeholder="Digite sua senha" 
                       autoCorrect={false}
                       onChangeText={() => {}} secureTextEntry 
                     />
@@ -89,129 +89,107 @@ export default function Config() {
 }
 
 const styles = StyleSheet.create({
-  imgContainer: {
-    flex: 1,
-  },
   imgBack: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover', // Ajuste o modo de redimensionamento da imagem
   },
-
   background: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
   },
   configContainer: {
-    width: "100%",
     flex: 1,
+    justifyContent: 'center',
   },
-
   contentpage: {
-    top: width >= 395 ? 50 : width >= 380 ? 45 : width >= 360 ? 43 : 40,
-    justifyContent: "center",
-    alignItems: "center",
+    top: -35,    
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-
-  //card
-
   row: {
-    width: "100%",
-    paddingHorizontal: 20,
-    justifyContent: "center",
+    width: '100%',
+    paddingHorizontal: 15,
+    justifyContent: 'center',
   },
-
   cardContainer: {
-    flex: 1,
-    flexDirection: "row",
-    marginHorizontal: 10,
+    gap: 20,
+    flexDirection: 'row',
+    margin: 10,
     borderRadius: 20,
   },
-
   card: {
-    width: "40%",
-    height: "115%",
-    backgroundColor: "transparent",
+    width: 150,
+    height: 150,
     borderRadius: 20,
-    
-    overflow: "hidden",
   },
-
   usersInfo: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
   },
-
   cardEmail: {
     marginTop: 5,
-    color: "white",
-    fontSize: width >= 395 ? 15 : width >= 380 ? 15 : width >= 360 ? 13 : 12,
+    color: '#fff',
+    fontSize: 15,
   },
-
   cardText: {
-    fontSize: width >= 395 ? 28 : width >= 380 ? 22 : 22,
-    fontWeight: "bold",
-    color: "white",
-    marginTop: 0,
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#fff',
   },
-
   btnProfile: {
-    backgroundColor: "#00BB83",
+    backgroundColor: '#00BB83',
     marginTop: 15,
-    width: "100%",
+    width: '100%',
     padding: 10,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   submitText: {
-    color: "#fff",
-    fontSize: width >= 395 ? 15 : width >= 380 ? 15 : width >= 360 ? 13 : 12,
-    fontWeight: "bold",
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
-
-  /* input */
-
   label: {
-    color: "#fff",
+    color: '#fff',
     marginBottom: 10,
     alignSelf: 'flex-start',
     paddingLeft: '5%',
   },
   containerForm: {
-    width: "100%",
-    top: width >= 395 ? 40 : width >= 380 ? 35 : width >= 360 ? 30 : 25,
+    width: '100%',
     alignItems: 'center',
   },
   formContent: {
     width: '90%',
   },
   containerInput: {
-    width: "100%",
+    width: '100%',
     padding: 10,
     alignItems: 'center',
   },
   input: {
-    backgroundColor: "#191919",
-    width: "100%",
+    backgroundColor: '#191919',
+    width: '100%',
     marginBottom: 10.7,
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: "#252525",
-    height: width >= 395 ? 53 : width >= 380 ? 50 : width >= 360 ? 45 : 43,
-    color: "#707070",
+    borderColor: '#252525',
+    height: 44,
+    color: '#707070',
     fontSize: 15,
-    padding: 0,
-    textAlign: "center",
+    padding: 10,
+    textAlign: 'center',
   },
-
   btnSubmit: {
-    backgroundColor: "#00BB83",
-    top: width >= 395 ? 15 : width >= 380 ? 15 : width >= 360 ? 12 : 10,
-    width: "100%",
-    padding: 15,
+    backgroundColor: '#00BB83',
+    width: '100%',
+    padding: 20,
+    fontSize: 25,
     borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

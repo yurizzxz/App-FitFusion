@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     flex: 1,
+    justifyContent: 'center',
   },
   headerText: {
     padding: width >= 390 ? 20 : width >= 360 ? 15 : 13,

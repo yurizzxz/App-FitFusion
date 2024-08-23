@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     flex: 1,
+    justifyContent: 'center',
   },
   headerText: {
     padding: width >= 390 ? 20 : width >= 360 ? 15 : 13,
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   },
   pagTitle: {
     color: "#fff",
-    paddingTop: 20,
+
     fontFamily: "ArchivoBlack",
     lineHeight: width >= 390 ? 55 : 40,
     marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 15 : width >= 360 ? 15 : 10,
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
   },
   pagDescription: {
     color: "#fff",
-    fontSize: width >= 480 ? 20 : width >= 390 ? 15 : width >= 360 ? 12 : 12,
+    fontSize: width >= 480 ? 20 : width >= 390 ? 16 : width >= 360 ? 15 : 12,
     marginBottom: width >= 390 ? 17 : width >= 360 ? 15 : 10,
   },
   row: {
