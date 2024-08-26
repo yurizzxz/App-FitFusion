@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
 
   headline: {
-    fontFamily: "Anton",
+    fontFamily: 'Anton',
     fontSize: width > 400 ? 58 : width > 350 ? 50 : 44,
     color: "#fff",
     textAlign: "center",

@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Image, StyleSheet, KeyboardAvoidingView, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
-
-const { width, height } = Dimensions.get('window');
-const imgbg = "../assets/images/bgfundo2.png";
+import { StatusBar } from 'react-native';
 
 export default function Splash() {
   const router = useRouter();
@@ -17,7 +15,9 @@ export default function Splash() {
   }, [router]);
 
   return (
+    
     <View style={styles.imgContainer}>
+      <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView style={styles.background}>
         <View style={styles.configContainer}>
           <View style={styles.containerLogo}>

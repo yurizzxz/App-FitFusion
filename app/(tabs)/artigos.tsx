@@ -2,21 +2,20 @@ import React from 'react';
 import {
   View,
   KeyboardAvoidingView,
-  Image,
+  ImageBackground,
   Text,
   StyleSheet,
-  ImageBackground,
   Dimensions,
-  FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView,
+  FlatList
 } from 'react-native';
 import useCustomFonts from '../../assets/fonts/fonts';
 
 const { width } = Dimensions.get('window');
 const imgbg = require('../../assets/images/bgfundo2.png');
 
-// Dados fictícios com descrição
-const DATA = [
+const Artigos = [
   { id: '1', title: 'Artigo 1', desc: 'Descrição do Artigo 1' },
   { id: '2', title: 'Artigo 2', desc: 'Descrição do Artigo 2' },
   { id: '3', title: 'Artigo 3', desc: 'Descrição do Artigo 3' },
@@ -24,8 +23,8 @@ const DATA = [
   { id: '5', title: 'Artigo 5', desc: 'Descrição do Artigo 5' },
 ];
 
-const Item = ({ title, desc, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={styles.item}>
+const Item = ({ title, desc }) => (
+  <TouchableOpacity style={styles.item}>
     <Text style={styles.itemTitle}>{title}</Text>
     <Text style={styles.itemDesc}>{desc}</Text>
   </TouchableOpacity>
@@ -38,7 +37,6 @@ export default function Treino() {
     <Item
       title={item.title}
       desc={item.desc}
-      onPress={() => alert(`${item.title}: ${item.desc}`)}
     />
   );
 
@@ -46,17 +44,20 @@ export default function Treino() {
     <View style={styles.imgContainer}>
       <ImageBackground source={imgbg} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background} behavior="padding">
-          <View style={styles.configContainer}>
-            <View style={styles.headerText}>
-              <Text style={styles.pagTitle}>Artigos</Text>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+         
+            <View style={styles.configContainer}>
+              <View style={styles.headerText}>
+                <Text style={styles.pagTitle}>Artigos</Text>
+              </View>
+              <FlatList
+                data={Artigos}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.list}
+              />
             </View>
-            <FlatList
-              data={DATA}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.list}
-            />
-          </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </ImageBackground>
     </View>
@@ -75,10 +76,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.95)',
   },
+  scrollContainer: {
+    paddingVertical: 50,
+  },
   configContainer: {
     width: '100%',
     flex: 1,
-    top: 85
+    paddingVertical: 50,
   },
   headerText: {
     padding: width >= 390 ? 20 : width >= 360 ? 15 : 13,
@@ -98,7 +102,7 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: '#1E1E1E',
-    padding: 25,
+    padding: 22,
     marginVertical: 8,
     borderRadius: 3,
   },

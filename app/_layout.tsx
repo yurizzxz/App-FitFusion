@@ -30,7 +30,9 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="home" />
+        <Stack.Screen name="dietas" />
         <Stack.Screen name="treinos" />
+        <Stack.Screen name="artigos" />
         <Stack.Screen name="config" />
       </Stack>
     </ThemeProvider>

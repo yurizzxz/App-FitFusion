@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   imgBack: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover', // Ajuste o modo de redimensionamento da imagem
+    resizeMode: 'cover', 
   },
   background: {
     flex: 1,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contentpage: {
-    top: -35,    
+    top: -25,    
     justifyContent: 'center',
     alignItems: 'center',
   },

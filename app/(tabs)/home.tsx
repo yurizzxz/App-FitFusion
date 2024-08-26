@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
 
   headLine: {
-    fontSize: width > 350 ? 45 : 40,
+    fontSize: width > 350 ? 50 : 40,
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
 
   contenthome: {
-    maxWidth: 350,
+    maxWidth: 352,
     width: "100%",
     color: "#fff",
     textAlign: "center",
