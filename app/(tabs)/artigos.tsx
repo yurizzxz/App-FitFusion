@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   KeyboardAvoidingView,
@@ -8,7 +8,8 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
-  FlatList
+  FlatList,
+  Modal
 } from 'react-native';
 import useCustomFonts from '../../assets/fonts/fonts';
 
@@ -23,20 +24,26 @@ const Artigos = [
   { id: '5', title: 'Artigo 5', desc: 'Descrição do Artigo 5' },
 ];
 
-const Item = ({ title, desc }) => (
-  <TouchableOpacity style={styles.item}>
+const Item = ({ title, desc, onPress }) => (
+  <TouchableOpacity style={styles.item} onPress={onPress}>
     <Text style={styles.itemTitle}>{title}</Text>
     <Text style={styles.itemDesc}>{desc}</Text>
   </TouchableOpacity>
 );
 
-export default function Treino() {
+export default function Artigo() {
   const fontsLoaded = useCustomFonts();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   const renderItem = ({ item }) => (
     <Item
       title={item.title}
       desc={item.desc}
+      onPress={() => {
+        setSelectedArticle(item);
+        setModalVisible(true);
+      }}
     />
   );
 
@@ -45,7 +52,6 @@ export default function Treino() {
       <ImageBackground source={imgbg} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background} behavior="padding">
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-         
             <View style={styles.configContainer}>
               <View style={styles.headerText}>
                 <Text style={styles.pagTitle}>Artigos</Text>
@@ -59,6 +65,34 @@ export default function Treino() {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
+
+        {/* Modal */}
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+           <TouchableOpacity
+            style={styles.modalContainer}
+            activeOpacity={1}
+            onPressOut={() => setModalVisible(false)}
+          >
+          <TouchableOpacity style={styles.modalView} activeOpacity={1}>
+              <Text style={styles.modalTitle}>{selectedArticle?.title}</Text>
+              <Text style={styles.modalDesc}>{selectedArticle?.desc}</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <View style={styles.modalFooter}>
+                 <Text style={styles.closeButtonText}>Fechar</Text>
+                </View>
+              </TouchableOpacity>
+            </TouchableOpacity>
+           
+          </TouchableOpacity>
+        </Modal>
       </ImageBackground>
     </View>
   );
@@ -77,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.95)',
   },
   scrollContainer: {
-    paddingVertical: 50,
+    paddingVertical: 30,
   },
   configContainer: {
     width: '100%',
@@ -113,5 +147,40 @@ const styles = StyleSheet.create({
   itemDesc: {
     fontSize: 14,
     color: '#ddd',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: '#1E1E1E',
+    borderRadius: 5,
+    padding: 20,
+    width: '90%',
+  },
+  modalTitle: {
+    fontSize: 24,
+    color: '#fff',
+    marginBottom: 15,
+  },
+  modalDesc: {
+    fontSize: 16,
+    color: '#ddd',
+    marginBottom: 15,
+  },
+  modalFooter: {
+    alignItems: 'center',
+    
+  },
+  closeButton: {
+    backgroundColor: '#00BB83',
+    borderRadius: 5,
+    padding: 10,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });
