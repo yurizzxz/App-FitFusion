@@ -1,30 +1,65 @@
 import React, { useState, useEffect } from "react";
-
 import {
   View,
   KeyboardAvoidingView,
   Image,
   Dimensions,
-  TextInput,
   Text,
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { getAuth } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebaseconfig";
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
 
 export default function Home() {
-  /* rota */
- const router = useRouter();
- const goTreinos = () => {
-   router.push("/treinos");
- };
- const goArtigos = () => {
-   router.push("/artigos");
- };
+  const [nome, setNome] = useState("Usuário");
+  const [greeting, setGreeting] = useState<string>(""); 
+  const router = useRouter();
+
+  useEffect(() => {
+    const auth = getAuth(); 
+    const user = auth.currentUser; 
+    
+    const currentHour = new Date().getHours();
+    if (currentHour >= 6 && currentHour < 12) {
+      setGreeting("Bom Dia");
+    } else if (currentHour >= 12 && currentHour < 18) {
+      setGreeting("Boa Tarde");
+    } else {
+      setGreeting("Boa Noite");
+    }
+    if (user) {
+      const docRef = doc(db, "users", user.uid);
+
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setNome(docSnap.data().name || "Usuário");
+        } else {
+          console.log("Nenhum documento encontrado!");
+        }
+      }, (error) => {
+        console.error("Erro ao ouvir mudanças no documento:", error);
+      });
+
+      return () => unsubscribe();
+    }
+  }, []);
+
+  
+  const goTreinos = () => {
+    router.push("/treinos");
+  };
+
+  const goArtigos = () => {
+    router.push("/artigos");
+  };
+
   return (
     <View style={styles.imgContainer}>
       <ImageBackground source={require(imgbg)} style={styles.imgBack}>
@@ -38,7 +73,7 @@ export default function Home() {
             </View>
             <View style={styles.configctnerhome}>
               <Text style={styles.headLine}>
-                Olá, <Text style={styles.span}>USUÁRIO!</Text>
+                {greeting}, <Text style={styles.span}>{nome}!</Text>
               </Text>
               <Text style={styles.contenthome}>
                 É fundamental que você dedique tempo para analisar
@@ -46,10 +81,16 @@ export default function Home() {
               </Text>
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, styles.trainButton]} onPress={goTreinos}>
+                <TouchableOpacity
+                  style={[styles.button, styles.trainButton]}
+                  onPress={goTreinos}
+                >
                   <Text style={styles.buttonText}>Treinos</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.tipsButton]} onPress={goArtigos}>
+                <TouchableOpacity
+                  style={[styles.button, styles.tipsButton]}
+                  onPress={goArtigos}
+                >
                   <Text style={styles.buttonText}>Dicas</Text>
                 </TouchableOpacity>
               </View>
@@ -69,7 +110,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
   background: {
     flex: 1,
     alignItems: "center",
@@ -78,7 +118,6 @@ const styles = StyleSheet.create({
   },
   configContainer: {
     width: "100%",
-    
     alignItems: "center",
     top: -35,
     justifyContent: "center",
@@ -92,37 +131,29 @@ const styles = StyleSheet.create({
     height: width > 350 ? 75 : 75,
     borderWidth: 0,
   },
-
-  //text config
-
   configctnerhome: {
     paddingHorizontal: 25,
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
   },
-
   headLine: {
-    fontSize: width > 350 ? 50 : 40,
+    fontSize: width > 350 ? 60 : 40,
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
   },
-
   span: {
     color: "#00FFb3",
   },
-
   contenthome: {
     maxWidth: 352,
+    marginBottom: 5,
     width: "100%",
     color: "#fff",
     textAlign: "center",
-    fontSize: width > 350 ? 14 : 14, 
+    fontSize: width > 350 ? 16 : 14,
   },
-
-  //buttons
-
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',

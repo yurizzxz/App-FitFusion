@@ -7,17 +7,29 @@ import {
   StyleSheet,
   ImageBackground,
   Dimensions,
+  TouchableOpacity
 } from "react-native";
 import useCustomFonts from "../../assets/fonts/fonts"; 
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
 const imgbg1 = "../../assets/images/bgfundo2.png";
+const bulk = "../../assets/images/bulking.jpg";
+const cut = "../../assets/images/cutting.jpg";
 
 export default function Treino() {
    /* fonte */
   const fontsLoaded = useCustomFonts();
 
+  const router = useRouter();
+  const goMusculacao = () => {
+    router.push("../screens/musculacao");
+  };
+  
+  const goAerobico = () => {
+    router.push("../screens/aerobico");
+  };
 
   return (
     <View style={styles.imgContainer}>
@@ -27,23 +39,27 @@ export default function Treino() {
             <View style={styles.headerText}>
               <Text style={styles.pagTitle}>Selecione o dieta ideal</Text>
               <Text style={styles.pagDescription}>
-              Selecione a dieta de acordo com suas necessidades...
+                Selecione a dieta de acordo com suas necessidades...
               </Text>
             </View>
 
             <View style={styles.contentPage}>
               <View style={styles.row}>
-                <View style={[styles.cardContainer]}>
-                  <Image source={require(imgbg1)} style={styles.card} />
-                  <Text style={styles.cardText}>Ganho de Massa Muscular (Bulking)</Text>
-                </View>
-                <View style={[styles.cardContainer]}>
-                  <Image source={require(imgbg1)} style={styles.card} />
-                  <Text style={styles.cardText}>Perca de Peso, Gordura e Definição (Cutting)</Text>
-                </View>
+                <TouchableOpacity
+                  style={styles.cardContainer}
+                  onPress={() => goMusculacao()}
+                >
+                  <Image source={require(bulk)} style={styles.card} />
+                  <Text style={styles.cardText}>Ganho de Peso (Bulking)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cardContainer}
+                  onPress={() => goAerobico()}
+                >
+                  <Image source={require(cut)} style={styles.card} />
+                  <Text style={styles.cardText}>Perca de Peso (Cutting)</Text>
+                </TouchableOpacity>
               </View>
-
-              
             </View>
           </View>
         </KeyboardAvoidingView>

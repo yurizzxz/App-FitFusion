@@ -14,15 +14,14 @@ export default function TabLayout() {
           tabBarActiveTintColor: '#007F66', 
           tabBarInactiveTintColor: '#007F66', 
           tabBarStyle: {
-            backgroundColor: '#1B1B1D',
-            width: width * 0.85, 
+            backgroundColor: '#0E0E0E',
+           
             borderTopColor: 'transparent', 
             height: width >= 395 ? 70 : width >= 360 ? 70 : 58,
-            borderRadius: 20, 
+           
             paddingHorizontal: 15,
             position: 'absolute', 
-            bottom: 10,
-            left: width >= 417 ? "8%" : width >= 395 ? "7.7%" : width >= 380 ? "7.6%" : width <= 370 ? "7.6%" : 25, 
+           
             zIndex: 1000, 
           },
           headerShown: false, 
@@ -37,7 +36,7 @@ export default function TabLayout() {
           options={{
             title: 'Home',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 35 : width >= 360 ? 32 : 28} name={focused ? 'home' : 'home-outline'} color={color} />
+              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'home' : 'home-outline'} color={color} />
             ),
           }}
         />
@@ -46,7 +45,7 @@ export default function TabLayout() {
           options={{
             title: 'Dietas',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 35 : width >= 360 ? 32 : 28} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
+              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
             ),
           }}
         />
@@ -55,7 +54,7 @@ export default function TabLayout() {
           options={{
             title: 'Treinos',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 35 : width >= 360 ? 32 : 28} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
+              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
             ),
           }}
         />
@@ -64,7 +63,7 @@ export default function TabLayout() {
           options={{
             title: 'Artigos',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 35 : width >= 360 ? 32 : 28} name={focused ? 'document' : 'document-outline'} color={color} />
+              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'document' : 'document-outline'} color={color} />
             ),
           }}
         />
@@ -73,7 +72,7 @@ export default function TabLayout() {
           options={{
             title: 'Config',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 35 : width >= 360 ? 32 : 28} name={focused ? 'settings' : 'settings-outline'} color={color} />
+              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'settings' : 'settings-outline'} color={color} />
             ),
           }}
         />

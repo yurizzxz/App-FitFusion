@@ -7,21 +7,43 @@ import {
   StyleSheet,
   ImageBackground,
   Dimensions,
+  TouchableOpacity
 } from "react-native";
 import useCustomFonts from "../../assets/fonts/fonts"; 
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
-const imgbg = "../../assets/images/bgfundo2.png";
-const imgbg1 = "../../assets/images/bgfundo2.png";
+const imgbg = require("../../assets/images/bgfundo2.png");
+const musculacao = require("../../assets//images/musculacao.jpg");
+const aerobico = require("../../assets/images/aerobico.jpg");
+const intensa = require("../../assets/images/intensa.jpg");
+const calistenia = require("../../assets/images/calistenia.png");
 
 export default function Treino() {
    /* fonte */
   const fontsLoaded = useCustomFonts();
 
+  const router = useRouter();
+
+  const goMusculacao = () => {
+    router.push("../screens/musculacao");
+  };
+  
+  const goAerobico = () => {
+    router.push("../screens/aerobico");
+  };
+
+  const goMuscIntensa = () => {
+    router.push("../screens/musculacaointensa");
+  };
+
+  const goCalistenia = () => {
+    router.push("../screens/calistenia");
+  };
 
   return (
     <View style={styles.imgContainer}>
-      <ImageBackground source={require(imgbg)} style={styles.imgBack}>
+      <ImageBackground source={imgbg} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
           <View style={styles.configContainer}>
             <View style={styles.headerText}>
@@ -33,25 +55,37 @@ export default function Treino() {
 
             <View style={styles.contentPage}>
               <View style={styles.row}>
-                <View style={[styles.cardContainer]}>
-                  <Image source={require(imgbg1)} style={styles.card} />
+                <TouchableOpacity
+                  style={styles.cardContainer}
+                  onPress={() => goMusculacao()}
+                >
+                  <Image source={musculacao} style={styles.card} />
                   <Text style={styles.cardText}>Musculação</Text>
-                </View>
-                <View style={[styles.cardContainer]}>
-                  <Image source={require(imgbg1)} style={styles.card} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cardContainer}
+                  onPress={() => goAerobico()}
+                >
+                  <Image source={aerobico} style={styles.card} />
                   <Text style={styles.cardText}>Aeróbico</Text>
-                </View>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.row}>
-                <View style={styles.cardContainer}>
-                  <Image source={require(imgbg1)} style={styles.card} />
+                <TouchableOpacity
+                  style={styles.cardContainer}
+                  onPress={() => goMuscIntensa()}
+                >
+                  <Image source={intensa} style={styles.card} />
                   <Text style={styles.cardText}>Musculação Intensa</Text>
-                </View>
-                <View style={styles.cardContainer}>
-                  <Image source={require(imgbg1)} style={styles.card} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cardContainer}
+                  onPress={() => goCalistenia()}
+                >
+                  <Image source={calistenia} style={styles.card} />
                   <Text style={styles.cardText}>Calistenia</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

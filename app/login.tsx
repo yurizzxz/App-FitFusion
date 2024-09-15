@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -9,69 +8,87 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebaseconfig";
 
 const imgbg = "../assets/images/bgfundo2.png";
 
 export default function Login() {
- /* rota */
- const router = useRouter();
- const goCadastro = () => {
-   router.push("/cadastro");
- };
- const goHome = () => {
-  router.push("/(tabs)/home");
-};
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+  const goCadastro = () => {
+    router.push("/cadastro");
+  };
+  
+  const goHome = () => {
+    router.push("/(tabs)/home");
+  };
+
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, senha);
+      goHome()
+    } catch (error) {
+      Alert.alert("Erro no login:", error.message);
+    }
+  };
 
   return (
     <View style={styles.imgContainer}>
       <ImageBackground
         source={require(imgbg)}
         style={styles.imgBack}
-        
       >
-      <KeyboardAvoidingView style={styles.background}>
-        <View style={styles.configContainer}>
-          <View style={styles.containerLogo}>
-            <Image
-              style={styles.logoLogin}
-              source={require("../assets/images/logo2.png")}
-              
-            />
-          </View>
-        
-          <View style={styles.containerInput}>
-          <Text style={styles.welcomeText}>Bem Vindo Novamente!</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Endereço de email"
-              autoCorrect={false}
-              onChangeText={() => {}
-            }
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Digite sua senha"
-              autoCorrect={false}
-              onChangeText={() => {}}
-            />
+        <KeyboardAvoidingView style={styles.background}>
+          <View style={styles.configContainer}>
+            <View style={styles.containerLogo}>
+              <Image
+                style={styles.logoLogin}
+                source={require("../assets/images/logo2.png")}
+              />
+            </View>
 
-            <TouchableOpacity style={styles.btnSubmit} onPress={goHome}>
-              <Text style={styles.submitText}>ENTRAR</Text>
-            </TouchableOpacity>
+            <View style={styles.containerInput}>
+              <Text style={styles.welcomeText}>Bem Vindo Novamente!</Text>
+              <TextInput
+                placeholderTextColor="#888"
+                style={styles.input}
+                placeholder="Endereço de email"
+                autoCorrect={false}
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+              />
+              <TextInput
+                placeholderTextColor="#888"
+                style={styles.input}
+                placeholder="Digite sua senha"
+                autoCorrect={false}
+                secureTextEntry
+                value={senha}
+                onChangeText={(text) => setSenha(text)} 
+              />
 
-            <TouchableOpacity style={styles.btnRegistrar} onPress={goCadastro}>
-              <View style={styles.textsContainer}>
-                <Text style={styles.textTextstyle}>
-                  Não tem uma conta?
-                  <Text style={styles.registrarText}> Registre-se</Text>
-                </Text>
-              </View>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.btnSubmit} onPress={handleLogin}>
+                <Text style={styles.submitText}>ENTRAR</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.btnRegistrar} onPress={goCadastro}>
+                <View style={styles.textsContainer}>
+                  <Text style={styles.textTextstyle}>
+                    Não tem uma conta?
+                    <Text style={styles.registrarText}> Registre-se</Text>
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </KeyboardAvoidingView></ImageBackground>
+        </KeyboardAvoidingView>
+      </ImageBackground>
     </View>
   );
 }
@@ -81,12 +98,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imgBack: {
-    
     width: "100%",
-    
     height: "100%",
   },
-
   background: {
     flex: 1,
     alignItems: "center",
@@ -113,14 +127,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "90%",
   },
-
   welcomeText: {
     color: "#Fff",
     marginBottom: 20,
     fontSize: 24,
     fontWeight: "bold",
   },
-
   input: {
     backgroundColor: "#191919",
     width: "98%",

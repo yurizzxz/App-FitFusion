@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.yurizzxz.projetoepa"
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +33,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "05f32550-04a7-4ba9-a3d2-d24abad17d7b"
+      }
     }
   }
 }
