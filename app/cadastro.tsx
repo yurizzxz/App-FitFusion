@@ -55,7 +55,6 @@ export default function Cadastro() {
       console.error("Erro ao registrar ou logar usuário:", error);
     }
   };
-
   return (
     <View style={styles.imgContainer}>
       <ImageBackground source={require("../assets/images/bgfundo2.png")} style={styles.imgBack}>
