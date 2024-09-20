@@ -1,4 +1,3 @@
-// NutritionForm.tsx
 import React, { useState } from 'react';
 
 const NutritionForm = () => {
@@ -27,7 +26,7 @@ const NutritionForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8081/form', {
+      const response = await fetch('http://localhost:3000/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,6 +45,13 @@ const NutritionForm = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatRefeicoes = (refeicoes) => {
+    if (Array.isArray(refeicoes)) {
+      return refeicoes.map((refeicao) => refeicao.replace(/[^a-zA-Z0-9\s]/g, '')); // remove caracteres especiais
+    }
+    return '';
   };
 
   return (
@@ -109,7 +115,7 @@ const NutritionForm = () => {
       {nutritionData && (
         <div>
           <h3>Dieta Gerada:</h3>
-          <pre>{JSON.stringify(nutritionData, null, 2)}</pre>
+          <pre>{JSON.stringify(nutritionData.data.refeicoes, null, 2)}</pre>
         </div>
       )}
     </div>
