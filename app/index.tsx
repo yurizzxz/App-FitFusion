@@ -2,8 +2,11 @@ import React, { useEffect } from "react";
 import { View, Image, StyleSheet, KeyboardAvoidingView, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from 'react-native';
+import 'react-native-reanimated';
+
 
 export default function Splash() {
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -15,6 +18,7 @@ export default function Splash() {
   }, [router]);
 
   return (
+    
     
     <View style={styles.imgContainer}>
       <StatusBar barStyle="light-content" />
