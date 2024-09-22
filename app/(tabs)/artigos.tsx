@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   KeyboardAvoidingView,
@@ -9,25 +9,23 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
-  Modal
+  Modal,
 } from 'react-native';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import useCustomFonts from '../../assets/fonts/fonts';
 
 const { width } = Dimensions.get('window');
 const imgbg = require('../../assets/images/bgfundo2.png');
 
-const Artigos = [
-  { id: '1', title: 'Artigo 1', desc: 'Descrição do Artigo 1' },
-  { id: '2', title: 'Artigo 2', desc: 'Descrição do Artigo 2' },
-  { id: '3', title: 'Artigo 3', desc: 'Descrição do Artigo 3' },
-  { id: '4', title: 'Artigo 4', desc: 'Descrição do Artigo 4' },
-  { id: '5', title: 'Artigo 5', desc: 'Descrição do Artigo 5' },
-];
+import { db } from "../firebaseconfig"; 
 
 const Item = ({ title, desc, onPress }) => (
   <TouchableOpacity style={styles.item} onPress={onPress}>
     <Text style={styles.itemTitle}>{title}</Text>
-    <Text style={styles.itemDesc}>{desc}</Text>
+    <Text style={styles.itemDesc}>
+      {desc.length > 50 ? `${desc.substring(0, 50)}...` : desc}
+    </Text>
   </TouchableOpacity>
 );
 
@@ -35,6 +33,18 @@ export default function Artigo() {
   const fontsLoaded = useCustomFonts();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [artigos, setArtigos] = useState([]);
+
+  useEffect(() => {
+    const fetchArtigos = async () => {
+      const artigosCollection = collection(db, 'artigos');
+      const artigoSnapshot = await getDocs(artigosCollection);
+      const artigoList = artigoSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setArtigos(artigoList);
+    };
+
+    fetchArtigos();
+  }, []);
 
   const renderItem = ({ item }) => (
     <Item
@@ -57,7 +67,7 @@ export default function Artigo() {
                 <Text style={styles.pagTitle}>Artigos</Text>
               </View>
               <FlatList
-                data={Artigos}
+                data={artigos}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
@@ -73,24 +83,25 @@ export default function Artigo() {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
         >
-           <TouchableOpacity
+          <TouchableOpacity
             style={styles.modalContainer}
             activeOpacity={1}
             onPressOut={() => setModalVisible(false)}
           >
-          <TouchableOpacity style={styles.modalView} activeOpacity={1}>
-              <Text style={styles.modalTitle}>{selectedArticle?.title}</Text>
-              <Text style={styles.modalDesc}>{selectedArticle?.desc}</Text>
+            <TouchableOpacity style={styles.modalView} activeOpacity={1}>
+              <ScrollView>
+                <Text style={styles.modalTitle}>{selectedArticle?.title}</Text>
+                <Text style={styles.modalDesc}>{selectedArticle?.desc}</Text>
+              </ScrollView>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setModalVisible(false)}
               >
                 <View style={styles.modalFooter}>
-                 <Text style={styles.closeButtonText}>Fechar</Text>
+                  <Text style={styles.closeButtonText}>Fechar</Text>
                 </View>
               </TouchableOpacity>
             </TouchableOpacity>
-           
           </TouchableOpacity>
         </Modal>
       </ImageBackground>
@@ -159,6 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 20,
     width: '90%',
+    maxHeight: '80%',
   },
   modalTitle: {
     fontSize: 24,
@@ -172,7 +184,6 @@ const styles = StyleSheet.create({
   },
   modalFooter: {
     alignItems: 'center',
-    
   },
   closeButton: {
     backgroundColor: '#00BB83',

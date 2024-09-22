@@ -6,7 +6,7 @@ class CreateNutritionService {
   async execute({ name, age, gender, height, level, objective, weight }: DataProps){
     
     try{
-      const genAI = new GoogleGenerativeAI('AIzaSyBc5Q25nf_KAu27r-3MI7u20ypaZSG83lg'
+      const genAI = new GoogleGenerativeAI('AIzaSyDo9ZrTYtbT93YcEcvKmhTfNh7nGKHO980'
       )
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"})
 
