@@ -1,67 +1,58 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   KeyboardAvoidingView,
-  Image,
+  ImageBackground,
   Text,
   StyleSheet,
-  ImageBackground,
   Dimensions,
-  TouchableOpacity
-} from "react-native";
+  ScrollView, 
+} from 'react-native';
 import useCustomFonts from "../../assets/fonts/fonts"; 
 import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
-const imgbg = "../../assets/images/bgfundo2.png";
-const imgbg1 = "../../assets/images/bgfundo2.png";
-const bulk = "../../assets/images/bulking.jpg";
-const cut = "../../assets/images/cutting.jpg";
+const imgbg = require("../../assets/images/bgfundo2.png");
 
-export default function Treino() {
-   /* fonte */
+export default function Dietas() {
+  const [nutritionData, setNutritionData] = useState(null);
   const fontsLoaded = useCustomFonts();
-
   const router = useRouter();
-  const goMusculacao = () => {
-    router.push("../screens/musculacao");
-  };
-  
-  const goAerobico = () => {
-    router.push("../screens/aerobico");
-  };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('nutritionData');
+    if (storedData) {
+      setNutritionData(JSON.parse(storedData));
+    }
+  }, []);
 
   return (
     <View style={styles.imgContainer}>
-      <ImageBackground source={require(imgbg)} style={styles.imgBack}>
+      <ImageBackground source={imgbg} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
-          <View style={styles.configContainer}>
-            <View style={styles.headerText}>
-              <Text style={styles.pagTitle}>Selecione o dieta ideal</Text>
-              <Text style={styles.pagDescription}>
-                Selecione a dieta de acordo com suas necessidades...
-              </Text>
-            </View>
-
-            <View style={styles.contentPage}>
-              <View style={styles.row}>
-                <TouchableOpacity
-                  style={styles.cardContainer}
-                  onPress={() => goMusculacao()}
-                >
-                  <Image source={require(bulk)} style={styles.card} />
-                  <Text style={styles.cardText}>Ganho de Peso (Bulking)</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.cardContainer}
-                  onPress={() => goAerobico()}
-                >
-                  <Image source={require(cut)} style={styles.card} />
-                  <Text style={styles.cardText}>Perca de Peso (Cutting)</Text>
-                </TouchableOpacity>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <Text style={styles.title}>Sua dieta ideal está aqui</Text>
+            {nutritionData ? (
+              <View>
+                {nutritionData.data.refeicoes.map((refeicao, index) => (
+                  <View key={index} style={styles.card}>
+                    <Text style={styles.cardSubtitle}>{refeicao.nome}</Text>
+                    <Text style={styles.cardText}>
+                      <Text style={styles.bold}>Horário:</Text> {refeicao.horario}
+                    </Text>
+                    <Text style={styles.cardText}>
+                      <Text style={styles.bold}>Alimentos:</Text>
+                    </Text>
+                    {Array.isArray(refeicao.alimentos) && refeicao.alimentos.map((alimento, alimentoIndex) => (
+                      <Text key={alimentoIndex} style={styles.cardText}>{alimento}</Text>
+                    ))}
+                  </View>
+                ))}
               </View>
-            </View>
-          </View>
+            ) : (
+              <Text style={styles.noDataText}>Não foram encontrados dados nutricionais.</Text>
+            )}
+          </ScrollView>
         </KeyboardAvoidingView>
       </ImageBackground>
     </View>
@@ -80,57 +71,46 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.95)",
   },
-  configContainer: {
-    width: "100%",
-    flex: 1,
-    justifyContent: 'center',
+  scrollContainer: {
+    paddingTop: 50,
+    padding: 20,
+    flexGrow: 1,
+    paddingBottom: 80,
   },
-  headerText: {
-    padding: width >= 390 ? 20 : width >= 360 ? 15 : 13,
-    paddingLeft: 20,
-    width: "95%",
-    marginBottom: 15,
-  },
-  pagTitle: {
-    color: "#fff",
-    paddingTop: 20,
-    fontFamily: "ArchivoBlack",
-    lineHeight: width >= 390 ? 55 : 40,
-    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 15 : width >= 360 ? 15 : 10,
+  title: {
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
-  },
-  pagDescription: {
-    color: "#fff",
-    fontSize: width >= 480 ? 20 : width >= 390 ? 15 : width >= 360 ? 12 : 12,
-    marginBottom: width >= 390 ? 17 : width >= 360 ? 15 : 10,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: width >= 390 ? -35 : width >= 360 ? -30 : -40,
-    width: "100%",
-    paddingHorizontal: 10,
-  },
-  cardContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-    marginBottom: width >= 390 ? 100 : width >= 360 ? 95 : 85,
-    aspectRatio: 1.15,
-    borderRadius: 20,
+    fontWeight: 'bold',
+    fontFamily: "ArchivoBlack",
+    color: '#fff',
+    marginBottom: 20,
   },
   card: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "transparent",
-    borderRadius: 20,
-    overflow: "hidden",
+    backgroundColor: '#101010',
+    borderColor: '#101010',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 15,
+  },
+  cardSubtitle: {
+    fontSize: 20,
+    marginBottom: 5,
+    fontWeight: 'bold',
+    color: '#00BB83',
   },
   cardText: {
-    fontSize: width >= 390 ? 18 : width >= 360 ? 14 : 12,
-    color: "white",
-    marginTop: 15,
-    textAlign: "center",
+    fontSize: 16,
+    color: '#fff',
+    marginTop: 5,
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  noDataText: {
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 20,
+    
   },
 });
+
