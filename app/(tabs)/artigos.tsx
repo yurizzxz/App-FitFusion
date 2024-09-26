@@ -11,14 +11,13 @@ import {
   FlatList,
   Modal,
 } from 'react-native';
-import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { Picker } from '@react-native-picker/picker';
 import useCustomFonts from '../../assets/fonts/fonts';
+import { db } from "../firebaseconfig"; 
 
 const { width } = Dimensions.get('window');
 const imgbg = require('../../assets/images/bgfundo2.png');
-
-import { db } from "../firebaseconfig"; 
 
 const Item = ({ title, desc, onPress }) => (
   <TouchableOpacity style={styles.item} onPress={onPress}>
@@ -34,6 +33,17 @@ export default function Artigo() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [artigos, setArtigos] = useState([]);
+  const [filteredArtigos, setFilteredArtigos] = useState([]);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState('todos'); 
+
+  const categorias = [
+    'todos',
+    'suplementacao',
+    'hipertrofia',
+    'emagrecer',
+    'treino',
+    'alimentacao',
+  ];
 
   useEffect(() => {
     const fetchArtigos = async () => {
@@ -41,10 +51,19 @@ export default function Artigo() {
       const artigoSnapshot = await getDocs(artigosCollection);
       const artigoList = artigoSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setArtigos(artigoList);
+      setFilteredArtigos(artigoList);
     };
 
     fetchArtigos();
   }, []);
+
+  useEffect(() => {
+    if (categoriaSelecionada === 'todos') {
+      setFilteredArtigos(artigos);
+    } else {
+      setFilteredArtigos(artigos.filter(article => article.categoria === categoriaSelecionada));
+    }
+  }, [categoriaSelecionada, artigos]);
 
   const renderItem = ({ item }) => (
     <Item
@@ -65,9 +84,25 @@ export default function Artigo() {
             <View style={styles.configContainer}>
               <View style={styles.headerText}>
                 <Text style={styles.pagTitle}>Artigos</Text>
+                {/* filtros */}
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={categoriaSelecionada}
+                    onValueChange={(itemValue) => setCategoriaSelecionada(itemValue)}
+                    style={styles.picker}
+                  >
+                    {categorias.map((categoria) => (
+                      <Picker.Item
+                        key={categoria}
+                        label={categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+                        value={categoria}
+                      />
+                    ))}
+                  </Picker>
+                </View>
               </View>
               <FlatList
-                data={artigos}
+                data={filteredArtigos}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
@@ -122,12 +157,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.95)',
   },
   scrollContainer: {
-    paddingVertical: 30,
+    paddingVertical: 35,
   },
   configContainer: {
     width: '100%',
     flex: 1,
-    paddingVertical: 50,
+    paddingVertical: 20,
   },
   headerText: {
     padding: width >= 390 ? 20 : width >= 360 ? 15 : 13,
@@ -138,8 +173,23 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'ArchivoBlack',
     lineHeight: width >= 390 ? 55 : 40,
-    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 15 : width >= 360 ? 12 : 10,
+    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 15 : width >= 475 ? 15 : width >= 360 ? 12 : 10,
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
+  },
+  pickerContainer: {
+    borderWidth: 0,
+    borderRadius: 5,
+    overflow: 'hidden'
+  },
+  picker: {
+    backgroundColor: '#1E1E1E',
+    height: 50,
+    width: '100%',
+    fontWeight: 'bold',
+    color: '#00BB83',
+    fontSize: 16,
+    paddingHorizontal: 10,
+    borderWidth: 0,
   },
   list: {
     paddingHorizontal: 20,
@@ -152,7 +202,9 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   itemTitle: {
-    fontSize: 18,
+    fontWeight: 'bold',
+    fontSize: 22,
+    marginBottom: 10,
     color: '#fff',
   },
   itemDesc: {
@@ -173,7 +225,8 @@ const styles = StyleSheet.create({
     maxHeight: '80%',
   },
   modalTitle: {
-    fontSize: 24,
+    fontWeight: 'bold',
+    fontSize: 26,
     color: '#fff',
     marginBottom: 15,
   },
