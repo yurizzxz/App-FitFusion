@@ -22,9 +22,11 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   updateProfile,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseconfig";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
@@ -52,19 +54,22 @@ export default function Config({ navigation }) {
   const [loading, setLoading] = useState(true);
 
   const auth = getAuth();
+  const router = useRouter();
   const user = auth.currentUser;
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          setUserName(userData.name);
-          setUserEmail(userData.email);
-        } else {
-          console.log("No such document!");
+        if (user) {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setUserName(userData.name);
+            setUserEmail(userData.email);
+          } else {
+            console.log("No such document!");
+          }
         }
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
@@ -73,8 +78,36 @@ export default function Config({ navigation }) {
       }
     };
 
-    fetchUserData();
-  }, []);
+   
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        Alert.alert("Sessão expirada", "Sua sessão expirou. Por favor, faça login novamente.");
+        router.push('../begin');
+      } else {
+        fetchUserData();
+      }
+    });
+
+    const intervalId = setInterval(() => {
+      if (auth.currentUser) {
+        const keepAlive = async () => {
+          try {
+            const docRef = doc(db, "users", auth.currentUser.uid);
+            await getDoc(docRef);
+          } catch (error) {
+            console.error("Erro ao manter a sessão ativa:", error);
+          }
+        };
+        keepAlive();
+      }
+    }, 604800000); // 1 minuto (60000 ms)
+
+    return () => {
+      clearInterval(intervalId);
+      unsubscribe(); 
+    };
+  }, [auth, navigation]);
 
   const getErrorMessage = (error) => {
     if (error.code === "auth/user-not-found") {
@@ -100,23 +133,41 @@ export default function Config({ navigation }) {
 
   const handleConfirmSave = async () => {
     try {
-      await reauthenticate(senhaConfirmacao);
-
-      const docRef = doc(db, "users", user.uid);
-      await updateDoc(docRef, { name: userName });
-
+      if (!user) {
+        Alert.alert("Erro", "Usuário não autenticado. Por favor, faça login novamente.");
+        return;
+      }
+  
+      if (newPassword || userEmail !== user.email) {
+        if (!senhaConfirmacao) {
+          Alert.alert("Erro", "Você precisa fornecer sua senha atual para alterar o e-mail ou a senha.");
+          return;
+        }
+        await reauthenticate(senhaConfirmacao);
+      }
+  
+      if (userName !== "") {
+        const docRef = doc(db, "users", user.uid);
+        await updateDoc(docRef, { name: userName });
+      }
+  
       if (userEmail !== user.email) {
         await updateEmail(user, userEmail);
         Alert.alert("Sucesso", "E-mail atualizado com sucesso! Faça login novamente.");
         await signOut(auth);
         return;
       }
-
-      if (newPassword) {
+  
+      if (newPassword && newPassword === confirmPassword) {
         await updatePassword(user, newPassword);
-        Alert.alert("Sucesso", "Dados e senha atualizados com sucesso!");
+        Alert.alert("Sucesso", "Senha atualizada com sucesso!");
         await signOut(auth);
-      } else {
+      } else if (newPassword && newPassword !== confirmPassword) {
+        Alert.alert("Erro", "As senhas não coincidem. Por favor, tente novamente.");
+        return;
+      }
+  
+      if (!newPassword && userEmail === user.email) {
         Alert.alert("Sucesso", "Dados atualizados com sucesso!");
       }
     } catch (error) {
@@ -124,6 +175,9 @@ export default function Config({ navigation }) {
       Alert.alert("Erro", errorMessage);
       console.error("Erro ao atualizar dados:", errorMessage);
     } finally {
+      setNewPassword("");
+      setConfirmPassword("");
+      setSenhaConfirmacao("");
       setModalVisible(false);
     }
   };

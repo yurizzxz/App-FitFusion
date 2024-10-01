@@ -16,13 +16,12 @@ import { useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
 
 export default function Home() {
-  const [nome, setNome] = useState("Usuário");
+  const [nome, setNome] = useState("");
   const [greeting, setGreeting] = useState<string>("");
   const router = useRouter();
 

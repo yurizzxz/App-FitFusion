@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import useCustomFonts from "../../assets/fonts/fonts"; 
 import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get("window");
 const imgbg = require("../../assets/images/bgfundo2.png");
