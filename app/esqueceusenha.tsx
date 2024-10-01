@@ -11,31 +11,29 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "./firebaseconfig";
 
 const imgbg = "../assets/images/bgfundo2.png";
 
-export default function Login() {
+export default function EsqueceuSenha() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleLogin = async () => {
+  const handleRecoverPassword = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, senha);
-      router.push("/(tabs)/home");
+      await sendPasswordResetEmail(auth, email);
+      setMessage("E-mail de recuperação enviado com sucesso!");
+      Alert.alert("Sucesso", "Verifique seu e-mail para redefinir sua senha.");
     } catch (error) {
-      Alert.alert("Erro no login:", error.message);
+      console.error("Erro ao enviar e-mail de recuperação:", error);
+      Alert.alert("Erro", "Erro ao enviar e-mail de recuperação: " + error.message);
     }
   };
 
-  const goToForgotPassword = () => {
-    router.push("/esqueceusenha");
-  };
-
-  const goToSignUp = () => {
-    router.push("/cadastro");
+  const goBack = () => {
+    router.back();
   };
 
   return (
@@ -51,38 +49,27 @@ export default function Login() {
             </View>
 
             <View style={styles.containerInput}>
-              <Text style={styles.welcomeText}>Bem Vindo Novamente!</Text>
+              <Text style={styles.welcomeText}>Recupere sua senha</Text>
               <TextInput
                 placeholderTextColor="#888"
                 style={styles.input}
                 placeholder="Endereço de email"
                 autoCorrect={false}
                 value={email}
-                onChangeText={(text) => setEmail(text)}
-              />
-              <TextInput
-                placeholderTextColor="#888"
-                style={styles.input}
-                placeholder="Digite sua senha"
-                autoCorrect={false}
-                secureTextEntry
-                value={senha}
-                onChangeText={(text) => setSenha(text)}
+                onChangeText={setEmail}
               />
 
-              <TouchableOpacity style={styles.btnSubmit} onPress={handleLogin}>
-                <Text style={styles.submitText}>Entrar</Text>
+              <TouchableOpacity style={styles.btnSubmit} onPress={handleRecoverPassword}>
+                <Text style={styles.submitText}>Enviar email de redefinição</Text>
               </TouchableOpacity>
 
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={goToSignUp} style={styles.btnRegistrar}>
-                  <Text style={styles.registrarText}>Não tem uma conta?<Text style={{ color: '#00BB83'}}> Registre-se!</Text></Text>
-                </TouchableOpacity>
+              {message ? <Text style={styles.message}>{message}</Text> : null}
 
-                <TouchableOpacity onPress={goToForgotPassword}>
-                  <Text style={styles.registrarText}>Esqueci a senha</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity style={styles.btnRegistrar} onPress={goBack}>
+                <View style={styles.textsContainer}>
+                  <Text style={styles.textTextstyle}>Voltar</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -108,7 +95,6 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -5,
     justifyContent: "center",
   },
   containerLogo: {
@@ -142,13 +128,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 17,
     paddingHorizontal: 18,
-   
   },
   btnSubmit: {
     backgroundColor: "#00BB83",
     marginTop: 1,
     width: "98%",
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
@@ -156,22 +141,25 @@ const styles = StyleSheet.create({
   submitText: {
     color: "#fff",
     fontSize: 20,
-    fontWeight: "bold",
   },
-  buttonContainer: {
-    flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: 'center',
-    gap: 15,
-    width: "100%",
-    paddingHorizontal: 5,
-    paddingVertical: 25,
+  message: {
+    marginTop: 10,
+    color: "#fff",
+    fontSize: 15,
   },
   btnRegistrar: {
-    flex: 1,
+    width: "90%",
+    height: 45,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 15,
   },
-  registrarText: {
+  textsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textTextstyle: {
     color: "#fff",
-    
+    fontSize: 15,
   },
 });

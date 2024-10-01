@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     fontWeight: 'bold',
-    color: '#00BB83',
+    color: '#00FFb3',
     fontSize: 16,
     paddingHorizontal: 10,
     borderWidth: 0,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 20,
     width: '90%',
-    maxHeight: '80%',
+    maxHeight: '85%',
   },
   modalTitle: {
     fontWeight: 'bold',

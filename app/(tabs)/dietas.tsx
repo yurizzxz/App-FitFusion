@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import useCustomFonts from "../../assets/fonts/fonts"; 
 import { useRouter } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get("window");
 const imgbg = require("../../assets/images/bgfundo2.png");
@@ -31,7 +32,7 @@ export default function Dietas() {
       <ImageBackground source={imgbg} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.title}>Sua dieta ideal está aqui</Text>
+            <Text style={styles.title}>Sua dieta está aqui!</Text>
             {nutritionData ? (
               <View>
                 {nutritionData.data.refeicoes.map((refeicao, index) => (

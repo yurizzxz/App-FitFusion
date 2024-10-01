@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
@@ -164,13 +165,7 @@ export default function Home() {
                   >
                     Preencha o formulário para gerar sua dieta personalizada!
                   </Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholderTextColor={"#fff"}
-                    placeholder="Nome"
-                    value={formData.name}
-                    onChangeText={(text) => handleChange("name", text)}
-                  />
+               
                   <TextInput
                     style={styles.input}
                     placeholderTextColor={"#fff"}
@@ -259,10 +254,11 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 200,
+    paddingTop: 220,
   },
   containerLogo: {
     justifyContent: "center",
+    marginBottom: 15
   },
   logoLogin: {
     width: width > 350 ? 200 : 175,
@@ -273,11 +269,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     textAlign: "center",
     justifyContent: "center",
-
     alignItems: "center",
   },
   headLine: {
-    fontSize: width > 350 ? 60 : 40,
+    fontSize: width > 350 ? 47 : 40,
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
@@ -287,7 +282,6 @@ const styles = StyleSheet.create({
   },
   contenthome: {
     maxWidth: 352,
-    marginBottom: 5,
     width: "100%",
     color: "#fff",
     textAlign: "center",
@@ -297,7 +291,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
-    marginTop: 30,
+    marginTop: 20,
   },
   button: {
     flex: 1,
@@ -348,7 +342,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 0,
   },
-
   formButtonText: {
     fontSize: 18,
     color: "#fff",

@@ -14,9 +14,17 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import { getAuth, User, updateProfile } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore"; 
-import { db } from "../firebaseconfig"; 
+import {
+  getAuth,
+  updatePassword,
+  updateEmail,
+  signOut,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  updateProfile,
+} from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebaseconfig";
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
@@ -33,90 +41,100 @@ const profilePics = [
 ];
 
 export default function Config({ navigation }) {
-  const [userName, setUserName] = useState<string>("");
-  const [userEmail, setUserEmail] = useState<string>("");
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [picModalVisible, setPicModalVisible] = useState<boolean>(false);
-  const [profilePic, setProfilePic] = useState<any>(profilePics[0]);
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [picModalVisible, setPicModalVisible] = useState(false);
+  const [profilePic, setProfilePic] = useState(profilePics[0]);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [senhaConfirmacao, setSenhaConfirmacao] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const auth = getAuth();
+  const user = auth.currentUser;
 
   useEffect(() => {
-    const user: User | null = auth.currentUser;
-
-    if (user) {
-      setUserEmail(user.email || "Email não definido");
-
-      const fetchUserName = async () => {
-        try {
-          const docRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            setUserName(docSnap.data().name); 
-          } else {
-            console.log("Nenhum documento encontrado!");
-          }
-        } catch (error) {
-          console.error("Erro ao buscar o nome do usuário:", error);
+    const fetchUserData = async () => {
+      try {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setUserName(userData.name);
+          setUserEmail(userData.email);
+        } else {
+          console.log("No such document!");
         }
-      };
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      fetchUserName();
-    }
+    fetchUserData();
   }, []);
 
-  const handleProfilePicClose = () => {
-    Alert.alert(
-      "Confirmar",
-      "Você tem certeza de que deseja fechar a seleção de foto de perfil?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Sim",
-          onPress: () => setPicModalVisible(false),
-        },
-      ]
+  const getErrorMessage = (error) => {
+    if (error.code === "auth/user-not-found") {
+      return "Usuário não encontrado";
+    }
+    if (error.code === "auth/wrong-password") {
+      return "Senha inválida";
+    }
+    return error.message;
+  };
+
+  const reauthenticate = async (password) => {
+    const credential = EmailAuthProvider.credential(user.email, password);
+    try {
+      await reauthenticateWithCredential(user, credential);
+      console.log("Reautenticação bem-sucedida.");
+    } catch (error) {
+      console.error("Erro ao reautenticar:", error);
+      Alert.alert("Erro", "Reautenticação falhou. Por favor, verifique sua senha.");
+      throw error;
+    }
+  };
+
+  const handleConfirmSave = async () => {
+    try {
+      await reauthenticate(senhaConfirmacao);
+
+      const docRef = doc(db, "users", user.uid);
+      await updateDoc(docRef, { name: userName });
+
+      if (userEmail !== user.email) {
+        await updateEmail(user, userEmail);
+        Alert.alert("Sucesso", "E-mail atualizado com sucesso! Faça login novamente.");
+        await signOut(auth);
+        return;
+      }
+
+      if (newPassword) {
+        await updatePassword(user, newPassword);
+        Alert.alert("Sucesso", "Dados e senha atualizados com sucesso!");
+        await signOut(auth);
+      } else {
+        Alert.alert("Sucesso", "Dados atualizados com sucesso!");
+      }
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      Alert.alert("Erro", errorMessage);
+      console.error("Erro ao atualizar dados:", errorMessage);
+    } finally {
+      setModalVisible(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Carregando...</Text>
+      </View>
     );
-  };
-
-  const handlePasswordChange = () => {
-    if (newPassword === confirmPassword && newPassword !== "") {
-      
-    }
-    setModalVisible(false);
-  };
-
-  const handleLogout = () => {
-    auth.signOut()
-      .then(() => {
-        navigation.navigate("../begin"); 
-      })
-      .catch((error) => {
-        Alert.alert("Erro", "Não foi possível fazer logout.");
-      });
-  };
-
-  const handleEditProfile = () => {
-    const user = auth.currentUser;
-    if (user) {
-      updateProfile(user, {
-        displayName: userName,
-      })
-        .then(() => {
-          Alert.alert("Sucesso", "Nome atualizado com sucesso!");
-          setModalVisible(false);
-        })
-        .catch((error) => {
-          Alert.alert("Erro", "Não foi possível atualizar o nome.");
-        });
-    }
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -136,7 +154,7 @@ export default function Config({ navigation }) {
                 >
                   <Text style={styles.submitText}>Editar Perfil</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleLogout}>
+                <TouchableOpacity onPress={() => signOut(auth).then(() => navigation.navigate("../begin"))}>
                   <Text style={styles.logoutText}>Fazer Logout</Text>
                 </TouchableOpacity>
               </View>
@@ -144,26 +162,77 @@ export default function Config({ navigation }) {
           </View>
         </KeyboardAvoidingView>
 
-        {/* Modal para selecionar foto de perfil */}
+        {/* modal perfil*/}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <Pressable
+            style={styles.modalContainer}
+            onPress={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <Text style={styles.label}>Nome</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Nome"
+                value={userName}
+                onChangeText={setUserName}
+              />
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={userEmail}
+                onChangeText={setUserEmail}
+              />
+              <Text style={styles.label}>Nova senha</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Digite sua nova senha"
+                value={newPassword}
+                secureTextEntry
+                onChangeText={setNewPassword}
+              />
+              <Text style={styles.label}>Confirmar nova senha</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirme sua nova senha"
+                value={confirmPassword}
+                secureTextEntry
+                onChangeText={setConfirmPassword}
+              />
+              <Text style={styles.label}>Senha atual</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Digite sua senha atual"
+                value={senhaConfirmacao}
+                secureTextEntry
+                onChangeText={setSenhaConfirmacao}
+              />
+              <TouchableOpacity style={styles.btnSubmit} onPress={handleConfirmSave}>
+                <Text style={styles.submitText}>Confirmar Alterações</Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Modal>
+
+        {/* modal foto d perfil*/}
         <Modal
           animationType="slide"
           transparent={true}
           visible={picModalVisible}
-          onRequestClose={handleProfilePicClose}
+          onRequestClose={() => setPicModalVisible(false)}
         >
           <Pressable
             style={styles.modalContainer}
             onPress={() => setPicModalVisible(false)}
           >
-            <View
-              style={styles.modalContent}
-              onStartShouldSetResponder={() => true}
-            >
+            <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Escolha uma foto de perfil</Text>
-              <ScrollView
-                horizontal
-                contentContainerStyle={styles.scrollContainer}
-              >
+              <ScrollView horizontal contentContainerStyle={styles.scrollContainer}>
                 {profilePics.map((item, index) => (
                   <Pressable
                     key={index}
@@ -177,68 +246,8 @@ export default function Config({ navigation }) {
                   </Pressable>
                 ))}
               </ScrollView>
-              <TouchableOpacity
-                style={styles.btnClose}
-                onPress={handleProfilePicClose}
-              >
+              <TouchableOpacity style={styles.btnClose} onPress={() => setPicModalVisible(false)}>
                 <Text style={styles.submitText}>Fechar</Text>
-              </TouchableOpacity>
-            </View>
-          </Pressable>
-        </Modal>
-
-        {/* Modal para editar perfil */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <Pressable
-            style={styles.modalContainer}
-            onPress={() => setModalVisible(false)}
-          >
-            <View
-              style={styles.modalContent}
-              onStartShouldSetResponder={() => true}
-            >
-              <Text style={styles.label}>Nome</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Nome"
-                autoCorrect={false}
-                defaultValue={userName}
-                onChangeText={(text) => setUserName(text)}
-              />
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                autoCorrect={false}
-                defaultValue={userEmail}
-                onChangeText={(text) => setUserEmail(text)}
-              />
-              <Text style={styles.label}>Redefinir a senha</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite sua senha"
-                autoCorrect={false}
-                secureTextEntry
-                onChangeText={(text) => setNewPassword(text)}
-              />
-              <Text style={styles.label}>Confirme sua nova senha</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite sua senha"
-                autoCorrect={false}
-                secureTextEntry
-                onChangeText={(text) => setConfirmPassword(text)}
-              />
-              <TouchableOpacity
-                style={styles.btnSubmit}
-                onPress={handleEditProfile}
-              >
-                <Text style={styles.submitText}>Confirmar Alterações</Text>
               </TouchableOpacity>
             </View>
           </Pressable>
@@ -247,6 +256,7 @@ export default function Config({ navigation }) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

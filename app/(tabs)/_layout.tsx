@@ -11,24 +11,25 @@ export default function TabLayout() {
     <View style={styles.container}>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: '#007F66', 
-          tabBarInactiveTintColor: '#007F66', 
+          tabBarActiveTintColor: '#00BB83',
+          tabBarInactiveTintColor: '#FFFFFF',
           tabBarStyle: {
             backgroundColor: '#0E0E0E',
-           
-            borderTopColor: 'transparent', 
-            height: width >= 395 ? 70 : width >= 360 ? 70 : 58,
-           
+            borderTopColor: 'transparent',
+            height: width >= 395 ? 70 : width >= 360 ? 70 : 58, 
             paddingHorizontal: 15,
-            position: 'absolute', 
-           
-            zIndex: 1000, 
+            position: 'absolute',
+            bottom: 10, 
+            borderRadius: 50, 
+            zIndex: 1000,
           },
-          headerShown: false, 
+          headerShown: false,
           tabBarLabelStyle: {
             display: 'none', 
           },
-          
+          tabBarIconStyle: {
+            position: 'relative', 
+          },
         }}
       >
         <Tabs.Screen
@@ -36,7 +37,10 @@ export default function TabLayout() {
           options={{
             title: 'Home',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'home' : 'home-outline'} color={color} />
+              <View style={styles.iconContainer}>
+                <TabBarIcon size={30} name={focused ? 'home' : 'home-outline'} color={color} />
+                {focused && <View style={styles.activeIndicator} />}
+              </View>
             ),
           }}
         />
@@ -45,7 +49,10 @@ export default function TabLayout() {
           options={{
             title: 'Dietas',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
+              <View style={styles.iconContainer}>
+                <TabBarIcon size={30} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
+                {focused && <View style={styles.activeIndicator} />}
+              </View>
             ),
           }}
         />
@@ -54,7 +61,10 @@ export default function TabLayout() {
           options={{
             title: 'Treinos',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
+              <View style={styles.iconContainer}>
+                <TabBarIcon size={30} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
+                {focused && <View style={styles.activeIndicator} />}
+              </View>
             ),
           }}
         />
@@ -63,7 +73,10 @@ export default function TabLayout() {
           options={{
             title: 'Artigos',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'document' : 'document-outline'} color={color} />
+              <View style={styles.iconContainer}>
+                <TabBarIcon size={30} name={focused ? 'document' : 'document-outline'} color={color} />
+                {focused && <View style={styles.activeIndicator} />}
+              </View>
             ),
           }}
         />
@@ -72,7 +85,10 @@ export default function TabLayout() {
           options={{
             title: 'Config',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon size={width >= 395 ? 30 : width >= 360 ? 30 : 30} name={focused ? 'settings' : 'settings-outline'} color={color} />
+              <View style={styles.iconContainer}>
+                <TabBarIcon size={30} name={focused ? 'settings' : 'settings-outline'} color={color} />
+                {focused && <View style={styles.activeIndicator} />}
+              </View>
             ),
           }}
         />
@@ -85,6 +101,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-   
+    backgroundColor: '#00BB83', 
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeIndicator: {
+    width: 30,
+    height: 3,
+    backgroundColor: '#00BB83',
+    borderRadius: 1.5,
+    position: 'absolute',
+    bottom: -17, 
   },
 });

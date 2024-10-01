@@ -34,6 +34,7 @@ export default function RootLayout() {
         <Stack.Screen name="treinos" />
         <Stack.Screen name="artigos" />
         <Stack.Screen name="config" />
+        
       </Stack>
     </ThemeProvider>
   );

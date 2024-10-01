@@ -10,9 +10,13 @@ import {
   ImageBackground,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "./firebaseconfig"; 
+import { db } from "./firebaseconfig";
 
 const imgbg = "../assets/images/bgfundo2.png";
 
@@ -30,34 +34,36 @@ export default function Cadastro() {
   const handleSignUp = async () => {
     const auth = getAuth();
     try {
-   
-      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        senha
+      );
       const user = userCredential.user;
-  
+
       console.log("Usuário criado com UID:", user.uid);
-  
-      
+
       await setDoc(doc(db, "users", user.uid), {
         name: nome,
         email: email,
       });
-  
+
       console.log("Nome e email salvos no Firestore.");
-  
-     
+
       await signInWithEmailAndPassword(auth, email, senha);
       console.log("Usuário logado com sucesso!");
-  
-      
+
       router.push("/home");
-  
     } catch (error) {
       console.error("Erro ao registrar ou logar usuário:", error);
     }
   };
   return (
     <View style={styles.imgContainer}>
-      <ImageBackground source={require("../assets/images/bgfundo2.png")} style={styles.imgBack}>
+      <ImageBackground
+        source={require("../assets/images/bgfundo2.png")}
+        style={styles.imgBack}
+      >
         <KeyboardAvoidingView style={styles.background}>
           <View style={styles.configContainer}>
             <View style={styles.containerLogo}>
@@ -68,25 +74,28 @@ export default function Cadastro() {
             </View>
             <View style={styles.containerInput}>
               <Text style={styles.welcomeText}>Cadastre-se ao FitFusion!</Text>
-              
-              <Text style={styles.label}>Nome</Text>
+
               <TextInput
                 style={styles.input}
+                placeholder="Digite seu nome" 
+                placeholderTextColor="#888"
                 autoCorrect={false}
                 value={nome}
                 onChangeText={setNome}
               />
 
-              <Text style={styles.label}>Endereço de email</Text>
               <TextInput
                 style={styles.input}
+                placeholder="Endereço de email" 
+                placeholderTextColor="#888"
                 autoCorrect={false}
                 value={email}
                 onChangeText={setEmail}
               />
 
-              <Text style={styles.label}>Senha</Text>
               <TextInput
+                placeholderTextColor="#888"
+                placeholder="Senha" 
                 style={styles.input}
                 autoCorrect={false}
                 secureTextEntry={true}
@@ -95,7 +104,7 @@ export default function Cadastro() {
               />
 
               <TouchableOpacity style={styles.btnSubmit} onPress={handleSignUp}>
-                <Text style={styles.submitText}>CADASTRAR</Text>
+                <Text style={styles.submitText}>Criar conta</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.btnRegistrar} onPress={goLogin}>
@@ -114,7 +123,6 @@ export default function Cadastro() {
   );
 }
 
-
 const styles = StyleSheet.create({
   imgContainer: {
     flex: 1,
@@ -132,7 +140,7 @@ const styles = StyleSheet.create({
   configContainer: {
     width: "100%",
     alignItems: "center",
-    top: -15,
+    top: -25,
     justifyContent: "center",
   },
   containerLogo: {
@@ -172,8 +180,7 @@ const styles = StyleSheet.create({
     height: 50,
     color: "#fff",
     fontSize: 17,
-    padding: 0,
-    textAlign: "center",
+    paddingHorizontal: 18,
   },
   btnSubmit: {
     backgroundColor: "#00BB83",
@@ -206,6 +213,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     top: 25,
     fontSize: 15,
-    fontWeight: "bold",
   },
 });
