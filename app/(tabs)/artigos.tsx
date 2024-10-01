@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   KeyboardAvoidingView,
@@ -9,25 +9,22 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
-  Modal
+  Modal,
 } from 'react-native';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { Picker } from '@react-native-picker/picker';
 import useCustomFonts from '../../assets/fonts/fonts';
+import { db } from "../firebaseconfig"; 
 
 const { width } = Dimensions.get('window');
 const imgbg = require('../../assets/images/bgfundo2.png');
 
-const Artigos = [
-  { id: '1', title: 'Artigo 1', desc: 'Descrição do Artigo 1' },
-  { id: '2', title: 'Artigo 2', desc: 'Descrição do Artigo 2' },
-  { id: '3', title: 'Artigo 3', desc: 'Descrição do Artigo 3' },
-  { id: '4', title: 'Artigo 4', desc: 'Descrição do Artigo 4' },
-  { id: '5', title: 'Artigo 5', desc: 'Descrição do Artigo 5' },
-];
-
 const Item = ({ title, desc, onPress }) => (
   <TouchableOpacity style={styles.item} onPress={onPress}>
     <Text style={styles.itemTitle}>{title}</Text>
-    <Text style={styles.itemDesc}>{desc}</Text>
+    <Text style={styles.itemDesc}>
+      {desc.length > 50 ? `${desc.substring(0, 50)}...` : desc}
+    </Text>
   </TouchableOpacity>
 );
 
@@ -35,6 +32,38 @@ export default function Artigo() {
   const fontsLoaded = useCustomFonts();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [artigos, setArtigos] = useState([]);
+  const [filteredArtigos, setFilteredArtigos] = useState([]);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState('todos'); 
+
+  const categorias = [
+    'todos',
+    'suplementacao',
+    'hipertrofia',
+    'emagrecer',
+    'treino',
+    'alimentacao',
+  ];
+
+  useEffect(() => {
+    const fetchArtigos = async () => {
+      const artigosCollection = collection(db, 'artigos');
+      const artigoSnapshot = await getDocs(artigosCollection);
+      const artigoList = artigoSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setArtigos(artigoList);
+      setFilteredArtigos(artigoList);
+    };
+
+    fetchArtigos();
+  }, []);
+
+  useEffect(() => {
+    if (categoriaSelecionada === 'todos') {
+      setFilteredArtigos(artigos);
+    } else {
+      setFilteredArtigos(artigos.filter(article => article.categoria === categoriaSelecionada));
+    }
+  }, [categoriaSelecionada, artigos]);
 
   const renderItem = ({ item }) => (
     <Item
@@ -55,9 +84,25 @@ export default function Artigo() {
             <View style={styles.configContainer}>
               <View style={styles.headerText}>
                 <Text style={styles.pagTitle}>Artigos</Text>
+                {/* filtros */}
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={categoriaSelecionada}
+                    onValueChange={(itemValue) => setCategoriaSelecionada(itemValue)}
+                    style={styles.picker}
+                  >
+                    {categorias.map((categoria) => (
+                      <Picker.Item
+                        key={categoria}
+                        label={categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+                        value={categoria}
+                      />
+                    ))}
+                  </Picker>
+                </View>
               </View>
               <FlatList
-                data={Artigos}
+                data={filteredArtigos}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
@@ -73,24 +118,25 @@ export default function Artigo() {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
         >
-           <TouchableOpacity
+          <TouchableOpacity
             style={styles.modalContainer}
             activeOpacity={1}
             onPressOut={() => setModalVisible(false)}
           >
-          <TouchableOpacity style={styles.modalView} activeOpacity={1}>
-              <Text style={styles.modalTitle}>{selectedArticle?.title}</Text>
-              <Text style={styles.modalDesc}>{selectedArticle?.desc}</Text>
+            <TouchableOpacity style={styles.modalView} activeOpacity={1}>
+              <ScrollView>
+                <Text style={styles.modalTitle}>{selectedArticle?.title}</Text>
+                <Text style={styles.modalDesc}>{selectedArticle?.desc}</Text>
+              </ScrollView>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setModalVisible(false)}
               >
                 <View style={styles.modalFooter}>
-                 <Text style={styles.closeButtonText}>Fechar</Text>
+                  <Text style={styles.closeButtonText}>Fechar</Text>
                 </View>
               </TouchableOpacity>
             </TouchableOpacity>
-           
           </TouchableOpacity>
         </Modal>
       </ImageBackground>
@@ -111,12 +157,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.95)',
   },
   scrollContainer: {
-    paddingVertical: 30,
+    paddingVertical: 35,
   },
   configContainer: {
     width: '100%',
     flex: 1,
-    paddingVertical: 50,
+    paddingVertical: 20,
   },
   headerText: {
     padding: width >= 390 ? 20 : width >= 360 ? 15 : 13,
@@ -127,8 +173,23 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'ArchivoBlack',
     lineHeight: width >= 390 ? 55 : 40,
-    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 15 : width >= 360 ? 12 : 10,
+    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 15 : width >= 475 ? 15 : width >= 360 ? 12 : 10,
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
+  },
+  pickerContainer: {
+    borderWidth: 0,
+    borderRadius: 5,
+    overflow: 'hidden'
+  },
+  picker: {
+    backgroundColor: '#1E1E1E',
+    height: 50,
+    width: '100%',
+    fontWeight: 'bold',
+    color: '#00FFb3',
+    fontSize: 16,
+    paddingHorizontal: 10,
+    borderWidth: 0,
   },
   list: {
     paddingHorizontal: 20,
@@ -141,7 +202,9 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   itemTitle: {
-    fontSize: 18,
+    fontWeight: 'bold',
+    fontSize: 22,
+    marginBottom: 10,
     color: '#fff',
   },
   itemDesc: {
@@ -159,9 +222,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 20,
     width: '90%',
+    maxHeight: '85%',
   },
   modalTitle: {
-    fontSize: 24,
+    fontWeight: 'bold',
+    fontSize: 26,
     color: '#fff',
     marginBottom: 15,
   },
@@ -172,7 +237,6 @@ const styles = StyleSheet.create({
   },
   modalFooter: {
     alignItems: 'center',
-    
   },
   closeButton: {
     backgroundColor: '#00BB83',
