@@ -28,7 +28,6 @@ export default function Home() {
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
-
     const currentHour = new Date().getHours();
     if (currentHour >= 6 && currentHour < 12) {
       setGreeting("Bom Dia");
