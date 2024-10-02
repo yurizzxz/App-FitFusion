@@ -11,6 +11,7 @@ import {
 import useCustomFonts from "../../assets/fonts/fonts"; 
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const { width } = Dimensions.get("window");
 const imgbg = require("../../assets/images/bgfundo2.png");
@@ -20,20 +21,23 @@ export default function Dietas() {
   const fontsLoaded = useCustomFonts();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchNutritionData = async () => {
-      try {
-        const storedData = await AsyncStorage.getItem('nutritionData');
-        if (storedData) {
-          setNutritionData(JSON.parse(storedData));
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchNutritionData = async () => {
+        try {
+          const storedData = await AsyncStorage.getItem('nutritionData');
+          if (storedData) {
+            setNutritionData(JSON.parse(storedData));
+          }
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
         }
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-    };
+      };
   
-    fetchNutritionData();
-  }, []);
+      fetchNutritionData();
+    }, []) 
+  );
+
   return (
     <View style={styles.imgContainer}>
       <ImageBackground source={imgbg} style={styles.imgBack}>
@@ -88,7 +92,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
     fontWeight: 'bold',
-    fontFamily: "ArchivoBlack",
     color: '#fff',
     marginBottom: 20,
   },
@@ -118,7 +121,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     marginTop: 20,
-    
   },
 });
-

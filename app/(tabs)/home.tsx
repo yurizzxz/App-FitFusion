@@ -16,10 +16,10 @@ import { useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
-const imgbg = "../../assets/images/bgfundo2.png";
+const imgbg = require("../../assets/images/bgfundo2.png");
 
 export default function Home() {
   const [nome, setNome] = useState("");
@@ -87,9 +87,9 @@ export default function Home() {
 
   const handleSubmit = () => {
     setLoading(true);
-  
+
     const serverUrl = "http://localhost:3000/create";
-  
+
     fetch(serverUrl, {
       method: "POST",
       headers: {
@@ -105,8 +105,12 @@ export default function Home() {
       })
       .then((data) => {
         console.log("Dados recebidos:", data);
-        AsyncStorage.setItem("nutritionData", JSON.stringify(data));
-        router.push("/dietas");      })
+
+        AsyncStorage.setItem("nutritionData", JSON.stringify(data)).then(() => {
+          setFormData(data); 
+          router.push("/dietas");
+        });
+      })
       .catch((error) => {
         console.error("Erro ao enviar dados:", error);
       })
@@ -114,12 +118,11 @@ export default function Home() {
         setLoading(false);
       });
   };
-  
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.imgContainer}>
-        <ImageBackground source={require(imgbg)} style={styles.imgBack}>
+        <ImageBackground source={imgbg} style={styles.imgBack}>
           <KeyboardAvoidingView style={styles.background}>
             <View style={styles.configContainer}>
               <View style={styles.containerLogo}>
@@ -166,7 +169,7 @@ export default function Home() {
                   >
                     Preencha o formulário para gerar sua dieta personalizada!
                   </Text>
-               
+
                   <TextInput
                     style={styles.input}
                     placeholderTextColor={"#fff"}
@@ -200,10 +203,10 @@ export default function Home() {
                   />
                   <TextInput
                     style={styles.input}
-                    placeholderTextColor={"#fff"}
                     placeholder="Objetivo"
                     value={formData.objective}
                     onChangeText={(text) => handleChange("objective", text)}
+                    placeholderTextColor={"#fff"}
                   />
                   <TextInput
                     style={styles.input}
@@ -259,7 +262,7 @@ const styles = StyleSheet.create({
   },
   containerLogo: {
     justifyContent: "center",
-    marginBottom: 15
+    marginBottom: 15,
   },
   logoLogin: {
     width: width > 350 ? 200 : 175,
