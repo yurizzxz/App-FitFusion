@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import useCustomFonts from "../../assets/fonts/fonts"; 
 import { useRouter } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get("window");
 const imgbg = require("../../assets/images/bgfundo2.png");
@@ -20,18 +21,25 @@ export default function Dietas() {
   const router = useRouter();
 
   useEffect(() => {
-    const storedData = localStorage.getItem('nutritionData');
-    if (storedData) {
-      setNutritionData(JSON.parse(storedData));
-    }
+    const fetchNutritionData = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('nutritionData');
+        if (storedData) {
+          setNutritionData(JSON.parse(storedData));
+        }
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    };
+  
+    fetchNutritionData();
   }, []);
-
   return (
     <View style={styles.imgContainer}>
       <ImageBackground source={imgbg} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.title}>Sua dieta está aqui!</Text>
+            <Text style={styles.title}>Sua dieta está pronta para você!</Text>
             {nutritionData ? (
               <View>
                 {nutritionData.data.refeicoes.map((refeicao, index) => (
@@ -72,7 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.95)",
   },
   scrollContainer: {
-    paddingTop: 50,
+    paddingTop: 80,
     padding: 20,
     flexGrow: 1,
     paddingBottom: 80,

@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get("window");
 const imgbg = "../../assets/images/bgfundo2.png";
@@ -86,8 +87,10 @@ export default function Home() {
 
   const handleSubmit = () => {
     setLoading(true);
-
-    fetch("http://localhost:3000/create", {
+  
+    const serverUrl = "http://localhost:3000/create";
+  
+    fetch(serverUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,10 +104,9 @@ export default function Home() {
         return response.json();
       })
       .then((data) => {
-        localStorage.setItem("nutritionData", JSON.stringify(data));
-
-        window.location.href = "/dietas";
-      })
+        console.log("Dados recebidos:", data);
+        AsyncStorage.setItem("nutritionData", JSON.stringify(data));
+        router.push("/dietas");      })
       .catch((error) => {
         console.error("Erro ao enviar dados:", error);
       })
@@ -112,6 +114,7 @@ export default function Home() {
         setLoading(false);
       });
   };
+  
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
