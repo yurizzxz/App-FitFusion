@@ -89,7 +89,7 @@ export default function Home() {
   const handleSubmit = () => {
     setLoading(true);
 
-    const serverUrl = "http://192.168.0.119:3000/create";
+    const serverUrl = "http://ip:3000/create";
 
     fetch(serverUrl, {
       method: "POST",
