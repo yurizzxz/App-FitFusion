@@ -11,6 +11,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
@@ -88,7 +89,7 @@ export default function Home() {
   const handleSubmit = () => {
     setLoading(true);
 
-    const serverUrl = "http://localhost:3000/create";
+    const serverUrl = "http://192.168.0.119:3000/create";
 
     fetch(serverUrl, {
       method: "POST",
@@ -113,10 +114,16 @@ export default function Home() {
       })
       .catch((error) => {
         console.error("Erro ao enviar dados:", error);
+        Alert.alert("Erro", "Não foi possível gerar a dieta. Tente novamente.");
       })
       .finally(() => {
         setLoading(false);
       });
+
+      if (!formData.weight || !formData.height || !formData.age || !formData.objective) {
+        Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
+        return;
+      }
   };
 
   return (

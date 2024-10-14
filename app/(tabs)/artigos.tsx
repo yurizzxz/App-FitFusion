@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.95)',
   },
   scrollContainer: {
-    paddingVertical: 35,
+    paddingVertical: 55,
   },
   configContainer: {
     width: '100%',
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'ArchivoBlack',
     lineHeight: width >= 390 ? 55 : 40,
-    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 15 : width >= 475 ? 15 : width >= 360 ? 12 : 10,
+    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 20 : width >= 360 ? 20 : 10,
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
   },
   pickerContainer: {

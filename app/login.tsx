@@ -82,6 +82,7 @@ export default function Login() {
                 <TouchableOpacity onPress={goToForgotPassword}>
                   <Text style={styles.registrarText}>Esqueci a senha</Text>
                 </TouchableOpacity>
+               
               </View>
             </View>
           </View>
@@ -168,10 +169,11 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
   },
   btnRegistrar: {
-    flex: 1,
+    marginVertical: 0,
+    
   },
   registrarText: {
     color: "#fff",
-    
+    borderWidth: 1,
   },
 });

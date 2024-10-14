@@ -90,10 +90,12 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   title: {
+    fontFamily: 'ArchivoBlack',
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 20,
+    
   },
   card: {
     backgroundColor: '#101010',

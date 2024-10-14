@@ -18,7 +18,7 @@ const Header = ({ title }) => {
 
 const styles = StyleSheet.create({
     header: {
-        marginVertical: 20,
+        marginVertical: 60,
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10,

@@ -6,8 +6,7 @@ class CreateNutritionService {
   async execute({ name, age, gender, height, level, objective, weight }: DataProps){
     
     try{
-      const genAI = new GoogleGenerativeAI('AIzaSyDo9ZrTYtbT93YcEcvKmhTfNh7nGKHO980'
-      )
+      const genAI = new GoogleGenerativeAI('AIzaSyBFwgxwDdd5sHxlEnSNXSi2IOzONLizJOQ')
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"})
 
       const response = await model.generateContent(`Crie uma dieta completa para uma pessoa chamada ${name}, do sexo ${gender}, com peso atual de ${weight}kg, altura de ${height}m, idade de ${age} anos, com foco em ${objective}. A pessoa tem um nível de atividade ${level}. Para a dieta, considere alimentos comuns da classe média baixa brasileira, incluindo uma diversidade que atenda ao objetivo:
