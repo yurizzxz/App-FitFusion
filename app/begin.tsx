@@ -83,10 +83,10 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontFamily: 'ArchivoBlack',
-    fontSize: width > 400 ? 50 : width > 350 ? 50 : 40,
+    fontSize: width > 400 ? 45 : width > 350 ? 42 : 40,
     color: "#fff",
     textAlign: "left",
-    lineHeight: width > 400 ? 63 : width > 350 ? 55 : 49,
+    lineHeight: width > 400 ? 50 : width > 350 ? 50 : 49,
     marginBottom: 10,
     fontWeight: "bold",
   },
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   subheadline: {
     color: "#fff",
-    fontSize: width > 400 ? 20 : width > 350 ? 18 : 16,
+    fontSize: width > 400 ? 17.8 : width > 350 ? 17 : 16,
     textAlign: "left",
     marginBottom: 20,
   },
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   btnRegistrar: {
-    width: "90%",
+    width: "100%",
     height: 45,
     alignItems: "center",
     justifyContent: "center",

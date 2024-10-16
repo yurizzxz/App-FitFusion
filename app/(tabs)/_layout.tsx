@@ -14,17 +14,11 @@ export default function TabLayout() {
           tabBarActiveTintColor: '#00BB83',
           tabBarInactiveTintColor: '#FFFFFF',
           tabBarStyle: {
-<<<<<<< HEAD
             backgroundColor: '#0B0B0B',
-           
             borderTopColor: 'transparent', 
             height: width >= 395 ? 70 : width >= 360 ? 70 : 58,
-           
-=======
             backgroundColor: '#0E0E0E',
             borderTopColor: 'transparent',
-            height: width >= 395 ? 70 : width >= 360 ? 70 : 58, 
->>>>>>> dev
             paddingHorizontal: 15,
             position: 'absolute',
             bottom: 5, 
@@ -45,14 +39,10 @@ export default function TabLayout() {
           options={{
             title: 'Home',
             tabBarIcon: ({ color, focused }) => (
-<<<<<<< HEAD
-              <TabBarIcon size={width >= 395 ? 28.5 : width >= 360 ? 28.5 : 28.5} name={focused ? 'home' : 'home-outline'} color={color} />
-=======
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'home' : 'home-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
->>>>>>> dev
             ),
           }}
         />
@@ -61,14 +51,10 @@ export default function TabLayout() {
           options={{
             title: 'Dietas',
             tabBarIcon: ({ color, focused }) => (
-<<<<<<< HEAD
-              <TabBarIcon size={width >= 395 ? 28.5 : width >= 360 ? 28.5 : 28.5} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
-=======
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
->>>>>>> dev
             ),
           }}
         />
@@ -77,14 +63,10 @@ export default function TabLayout() {
           options={{
             title: 'Treinos',
             tabBarIcon: ({ color, focused }) => (
-<<<<<<< HEAD
-              <TabBarIcon size={width >= 395 ? 28.5 : width >= 360 ? 28.5 : 28.5} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
-=======
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
->>>>>>> dev
             ),
           }}
         />
@@ -93,14 +75,10 @@ export default function TabLayout() {
           options={{
             title: 'Artigos',
             tabBarIcon: ({ color, focused }) => (
-<<<<<<< HEAD
-              <TabBarIcon size={width >= 395 ? 28.5 : width >= 360 ? 28.5 : 28.5} name={focused ? 'document' : 'document-outline'} color={color} />
-=======
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'document' : 'document-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
->>>>>>> dev
             ),
           }}
         />
@@ -109,14 +87,10 @@ export default function TabLayout() {
           options={{
             title: 'Config',
             tabBarIcon: ({ color, focused }) => (
-<<<<<<< HEAD
-              <TabBarIcon size={width >= 395 ? 28.5 : width >= 360 ? 28.5 : 28.5} name={focused ? 'person' : 'person-outline'} color={color} />
-=======
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'settings' : 'settings-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
->>>>>>> dev
             ),
           }}
         />
