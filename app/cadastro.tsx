@@ -18,8 +18,6 @@ import {
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "./firebaseconfig";
 
-const imgbg = "../assets/images/bgfundo2.png";
-
 export default function Cadastro() {
   const router = useRouter();
 
@@ -61,7 +59,7 @@ export default function Cadastro() {
   return (
     <View style={styles.imgContainer}>
       <ImageBackground
-        source={require("../assets/images/bgfundo2.png")}
+        source={require("../assets/images/login-registro.webp")}
         style={styles.imgBack}
       >
         <KeyboardAvoidingView style={styles.background}>
@@ -69,7 +67,7 @@ export default function Cadastro() {
             <View style={styles.containerLogo}>
               <Image
                 style={styles.logoLogin}
-                source={require("../assets/images/logo2.png")}
+                source={require("../assets/images/logo-verde.png")}
               />
             </View>
             <View style={styles.containerInput}>

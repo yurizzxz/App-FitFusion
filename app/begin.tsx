@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-
+import React from "react";
 import {
   View,
   KeyboardAvoidingView,
-  Image,
   Dimensions,
   Text,
   TouchableOpacity,
@@ -11,15 +9,14 @@ import {
   ImageBackground,
 } from "react-native";
 import { useRouter } from "expo-router";
-import useCustomFonts from "../assets/fonts/fonts"; 
+import useCustomFonts from "../assets/fonts/fonts";
 
-const imgbg = "../assets/images/bgfundo2.png";
 const { width } = Dimensions.get("window");
-
 
 export default function Begin() {
   /* fonte */
   const fontsLoaded = useCustomFonts();
+
   /* rota */
   const router = useRouter();
   const goCadastro = () => {
@@ -29,12 +26,22 @@ export default function Begin() {
   const goLogin = () => {
     router.push("/login");
   };
+
   return (
     <View style={styles.imgContainer}>
-      <ImageBackground source={require(imgbg)} style={styles.imgBack}>
+      <ImageBackground
+        source={require("../assets/images/landing.jpeg")} // Alterar para a imagem de referência
+        style={styles.imgBack}
+        resizeMode="cover"
+      >
         <KeyboardAvoidingView style={styles.background}>
           <View style={styles.configContainer}>
-            <Text style={styles.headline}>O APLICATIVO FITNESS PERFEITO!</Text>
+            <Text style={styles.headline}>
+              Deixe seu corpo mais saudável{"\n"}e <Text style={styles.strongerText}>mais forte</Text>!
+            </Text>
+            <Text style={styles.subheadline}>
+              O esporte é uma forma de atividade física que geralmente é competitiva e visa aumentar as habilidades e capacidades físicas.
+            </Text>
             <TouchableOpacity style={styles.btnSubmit} onPress={goCadastro}>
               <Text style={styles.submitText}>Começar</Text>
             </TouchableOpacity>
@@ -60,8 +67,8 @@ const styles = StyleSheet.create({
   imgBack: {
     width: "100%",
     height: "100%",
+    justifyContent: "center",
   },
-
   background: {
     flex: 1,
     alignItems: "center",
@@ -69,46 +76,50 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   configContainer: {
+    bottom: 50,
     width: "100%",
-    alignItems: "center",
     padding: width > 400 ? 15 : 10,
-    top: -50,
     justifyContent: "center",
   },
-
   headline: {
-    fontFamily: 'Anton',
-    fontSize: width > 400 ? 58 : width > 350 ? 50 : 44,
+    fontFamily: 'ArchivoBlack',
+    fontSize: width > 400 ? 50 : width > 350 ? 50 : 40,
     color: "#fff",
-    textAlign: "center",
+    textAlign: "left",
     lineHeight: width > 400 ? 63 : width > 350 ? 55 : 49,
-    marginBottom: 20,
+    marginBottom: 10,
     fontWeight: "bold",
+  },
+  strongerText: {
+    color: "#00BB83", 
+  },
+  subheadline: {
+    color: "#fff",
+    fontSize: width > 400 ? 20 : width > 350 ? 18 : 16,
+    textAlign: "left",
+    marginBottom: 20,
   },
   btnSubmit: {
     backgroundColor: "#00BB83",
     marginTop: 1,
-    width: "98%",
-    padding: 17,
+    width: "100%",
+    padding: 15,
     borderRadius: 10,
     marginBottom: 15,
     alignItems: "center",
     justifyContent: "center",
   },
-
   submitText: {
     color: "#fff",
     fontSize: 25,
     fontWeight: "bold",
   },
-
   btnRegistrar: {
     width: "90%",
     height: 45,
     alignItems: "center",
     justifyContent: "center",
   },
-
   registrarText: {
     color: "#00BB83",
   },
@@ -118,7 +129,7 @@ const styles = StyleSheet.create({
   },
   textTextstyle: {
     color: "#fff",
-    fontSize:  width > 400 ? 18 : width > 350 ? 16 : 14,
+    fontSize: width > 400 ? 18 : width > 350 ? 16 : 14,
     fontWeight: "bold",
   },
 });

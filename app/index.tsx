@@ -27,7 +27,7 @@ export default function Splash() {
           <View style={styles.containerLogo}>
             <Image
               style={styles.logoSplash}
-              source={require("../assets/images/logo2.png")}
+              source={require("../assets/images/logo-verde.png")}
             />
           </View>
         </View>
@@ -39,7 +39,7 @@ export default function Splash() {
 const styles = StyleSheet.create({
   imgContainer: {
     flex: 1,
-    backgroundColor: "#00BB83",
+    backgroundColor: "#fff",
     height: "100%",
   },
   background: {

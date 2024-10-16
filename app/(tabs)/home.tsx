@@ -11,14 +11,16 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
-const imgbg = "../../assets/images/bgfundo2.png";
+const imgbg = require("../../assets/images/bgfundo2.png");
 
 export default function Home() {
   const [nome, setNome] = useState("");
@@ -28,7 +30,6 @@ export default function Home() {
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
-
     const currentHour = new Date().getHours();
     if (currentHour >= 6 && currentHour < 12) {
       setGreeting("Bom Dia");
@@ -88,7 +89,9 @@ export default function Home() {
   const handleSubmit = () => {
     setLoading(true);
 
-    fetch("http://localhost:3000/create", {
+    const serverUrl = "http://192.168.0.119:3000/create";
+
+    fetch(serverUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,28 +105,37 @@ export default function Home() {
         return response.json();
       })
       .then((data) => {
-        localStorage.setItem("nutritionData", JSON.stringify(data));
+        console.log("Dados recebidos:", data);
 
-        window.location.href = "/dietas";
+        AsyncStorage.setItem("nutritionData", JSON.stringify(data)).then(() => {
+          setFormData(data); 
+          router.push("/dietas");
+        });
       })
       .catch((error) => {
         console.error("Erro ao enviar dados:", error);
+        Alert.alert("Erro", "Não foi possível gerar a dieta. Tente novamente.");
       })
       .finally(() => {
         setLoading(false);
       });
+
+      if (!formData.weight || !formData.height || !formData.age || !formData.objective) {
+        Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
+        return;
+      }
   };
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.imgContainer}>
-        <ImageBackground source={require(imgbg)} style={styles.imgBack}>
+        <ImageBackground source={imgbg} style={styles.imgBack}>
           <KeyboardAvoidingView style={styles.background}>
             <View style={styles.configContainer}>
               <View style={styles.containerLogo}>
                 <Image
                   style={styles.logoLogin}
-                  source={require("../../assets/images/logo2.png")}
+                  source={require("../../assets/images/logo-verde.png")}
                 />
               </View>
               <View style={styles.configctnerhome}>
@@ -160,11 +172,10 @@ export default function Home() {
                       color: "white",
                       textAlign: "center",
                       marginBottom: 20,
-                    }}
-                  >
+                    }}>
                     Preencha o formulário para gerar sua dieta personalizada!
                   </Text>
-               
+
                   <TextInput
                     style={styles.input}
                     placeholderTextColor={"#fff"}
@@ -198,10 +209,10 @@ export default function Home() {
                   />
                   <TextInput
                     style={styles.input}
-                    placeholderTextColor={"#fff"}
                     placeholder="Objetivo"
                     value={formData.objective}
                     onChangeText={(text) => handleChange("objective", text)}
+                    placeholderTextColor={"#fff"}
                   />
                   <TextInput
                     style={styles.input}
@@ -257,7 +268,7 @@ const styles = StyleSheet.create({
   },
   containerLogo: {
     justifyContent: "center",
-    marginBottom: 15
+    marginBottom: 15,
   },
   logoLogin: {
     width: width > 350 ? 200 : 175,

@@ -8,30 +8,44 @@ import {
   Dimensions,
   ScrollView, 
 } from 'react-native';
-import useCustomFonts from "../../assets/fonts/fonts"; 
+
 import { useRouter } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import useCustomFonts from "../../assets/fonts/fonts"; 
 
 const { width } = Dimensions.get("window");
 const imgbg = require("../../assets/images/bgfundo2.png");
 
 export default function Dietas() {
-  const [nutritionData, setNutritionData] = useState(null);
   const fontsLoaded = useCustomFonts();
+  const [nutritionData, setNutritionData] = useState(null);
+
   const router = useRouter();
 
-  useEffect(() => {
-    const storedData = localStorage.getItem('nutritionData');
-    if (storedData) {
-      setNutritionData(JSON.parse(storedData));
-    }
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchNutritionData = async () => {
+        try {
+          const storedData = await AsyncStorage.getItem('nutritionData');
+          if (storedData) {
+            setNutritionData(JSON.parse(storedData));
+          }
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
+      };
+  
+      fetchNutritionData();
+    }, []) 
+  );
 
   return (
     <View style={styles.imgContainer}>
       <ImageBackground source={imgbg} style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background}>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.title}>Sua dieta está aqui!</Text>
+            <Text style={styles.title}>Sua dieta está pronta para você!</Text>
             {nutritionData ? (
               <View>
                 {nutritionData.data.refeicoes.map((refeicao, index) => (
@@ -72,17 +86,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.95)",
   },
   scrollContainer: {
-    paddingTop: 50,
+    paddingTop: 80,
     padding: 20,
     flexGrow: 1,
     paddingBottom: 80,
   },
   title: {
+    fontFamily: 'ArchivoBlack',
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
     fontWeight: 'bold',
-    fontFamily: "ArchivoBlack",
     color: '#fff',
     marginBottom: 20,
+    
   },
   card: {
     backgroundColor: '#101010',
@@ -110,7 +125,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     marginTop: 20,
-    
   },
 });
-
