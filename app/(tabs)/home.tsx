@@ -89,7 +89,7 @@ export default function Home() {
   const handleSubmit = () => {
     setLoading(true);
 
-    const serverUrl = "https://backend-fitfusion.onrender.com/create";
+    const serverUrl = "http://192.168.0.119:3000/create";
 
     fetch(serverUrl, {
       method: "POST",
@@ -172,8 +172,7 @@ export default function Home() {
                       color: "white",
                       textAlign: "center",
                       marginBottom: 20,
-                    }}
-                  >
+                    }}>
                     Preencha o formulário para gerar sua dieta personalizada!
                   </Text>
 
