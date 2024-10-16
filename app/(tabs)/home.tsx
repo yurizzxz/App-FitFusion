@@ -89,7 +89,7 @@ export default function Home() {
   const handleSubmit = () => {
     setLoading(true);
 
-    const serverUrl = "http://192.168.0.119:3000/create";
+    const serverUrl = "https://backend-fitfusion.onrender.com/create";
 
     fetch(serverUrl, {
       method: "POST",
@@ -135,7 +135,7 @@ export default function Home() {
               <View style={styles.containerLogo}>
                 <Image
                   style={styles.logoLogin}
-                  source={require("../../assets/images/logo2.png")}
+                  source={require("../../assets/images/logo-verde.png")}
                 />
               </View>
               <View style={styles.configctnerhome}>

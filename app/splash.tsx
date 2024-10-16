@@ -23,7 +23,7 @@ export default function Splash() {
           <View style={styles.containerLogo}>
             <Image
               style={styles.logoSplash}
-              source={require("../assets/images/logo2.png")}
+              source={require("../assets/images/logo-verde.png")}
             />
           </View>
         

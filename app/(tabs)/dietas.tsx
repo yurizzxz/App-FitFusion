@@ -8,17 +8,19 @@ import {
   Dimensions,
   ScrollView, 
 } from 'react-native';
-import useCustomFonts from "../../assets/fonts/fonts"; 
+
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import useCustomFonts from "../../assets/fonts/fonts"; 
 
 const { width } = Dimensions.get("window");
 const imgbg = require("../../assets/images/bgfundo2.png");
 
 export default function Dietas() {
-  const [nutritionData, setNutritionData] = useState(null);
   const fontsLoaded = useCustomFonts();
+  const [nutritionData, setNutritionData] = useState(null);
+
   const router = useRouter();
 
   useFocusEffect(

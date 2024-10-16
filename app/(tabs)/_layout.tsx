@@ -19,7 +19,7 @@ export default function TabLayout() {
             height: width >= 395 ? 70 : width >= 360 ? 70 : 58, 
             paddingHorizontal: 15,
             position: 'absolute',
-            bottom: 10, 
+            bottom: 5, 
             borderRadius: 50, 
             zIndex: 1000,
           },

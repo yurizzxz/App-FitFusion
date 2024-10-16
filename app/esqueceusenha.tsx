@@ -44,7 +44,7 @@ export default function EsqueceuSenha() {
             <View style={styles.containerLogo}>
               <Image
                 style={styles.logoLogin}
-                source={require("../assets/images/logo2.png")}
+                source={require("../assets/images/logo-verde.png")}
               />
             </View>
 

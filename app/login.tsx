@@ -14,7 +14,7 @@ import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebaseconfig";
 
-const imgbg = "../assets/images/bgfundo2.png";
+const imgbg = "../assets/images/login-registro.webp";
 
 export default function Login() {
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function Login() {
             <View style={styles.containerLogo}>
               <Image
                 style={styles.logoLogin}
-                source={require("../assets/images/logo2.png")}
+                source={require("../assets/images/logo-verde.png")}
               />
             </View>
 
