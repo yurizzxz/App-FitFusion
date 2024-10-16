@@ -1,0 +1,50 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main  # Executa o workflow ao fazer push na branch main
+
+jobs:
+  build-android-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout do código do repositório
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Configurar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Step 3: Instalar dependências do projeto
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Instalar o EAS CLI
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Step 5: Definir a variável de ambiente EXPO_TOKEN para autenticação automática no EAS
+      - name: Set EXPO_TOKEN environment variable
+        run: echo "EXPO_TOKEN=${{ secrets.EXPO_TOKEN }}" >> $GITHUB_ENV
+
+      # Step 6: Verificar o login no EAS
+      - name: Verify EAS Login
+        run: |
+          echo "Running eas whoami"
+          eas whoami || { echo "EAS login failed"; exit 1; }
+
+      # Step 7: Construir APK com EAS
+      - name: Build APK
+        run: eas build --platform android --profile production
+
+      # Step 8: Fazer upload do APK gerado como artefato
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: ./**/android/*.apk
