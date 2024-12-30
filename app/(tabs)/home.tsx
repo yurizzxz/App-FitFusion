@@ -12,20 +12,52 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  RefreshControl,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 
 const { width } = Dimensions.get("window");
-const imgbg = require("../../assets/images/bgfundo2.png");
+
+type FormData = {
+  name: string;
+  weight: string;
+  height: string;
+  age: string;
+  gender: string;
+  objective: string;
+  level: string;
+};
 
 export default function Home() {
-  const [nome, setNome] = useState("");
+  const [nome, setNome] = useState<string>("");
   const [greeting, setGreeting] = useState<string>("");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    weight: "",
+    height: "",
+    age: "",
+    gender: "",
+    objective: "",
+    level: "",
+  });
+  const [loading, setLoading] = useState<boolean>(false);
+  
   const router = useRouter();
+  
+  const statusBarHeight = Constants.statusBarHeight;
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -67,19 +99,7 @@ export default function Home() {
     router.push("/artigos");
   };
 
-  const [formData, setFormData] = useState({
-    name: "",
-    weight: "",
-    height: "",
-    age: "",
-    gender: "",
-    objective: "",
-    level: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (name, value) => {
+  const handleChange = (name: string, value: string) => {
     setFormData({
       ...formData,
       [name]: value,
@@ -108,7 +128,7 @@ export default function Home() {
         console.log("Dados recebidos:", data);
 
         AsyncStorage.setItem("nutritionData", JSON.stringify(data)).then(() => {
-          setFormData(data); 
+          setFormData(data);
           router.push("/dietas");
         });
       })
@@ -120,16 +140,19 @@ export default function Home() {
         setLoading(false);
       });
 
-      if (!formData.weight || !formData.height || !formData.age || !formData.objective) {
-        Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
-        return;
-      }
+    if (!formData.weight || !formData.height || !formData.age || !formData.objective) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      contentContainerStyle={[{ marginTop: statusBarHeight }]}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       <View style={styles.imgContainer}>
-        <ImageBackground source={imgbg} style={styles.imgBack}>
+        <ImageBackground style={styles.imgBack}>
           <KeyboardAvoidingView style={styles.background}>
             <View style={styles.configContainer}>
               <View style={styles.containerLogo}>
@@ -172,7 +195,8 @@ export default function Home() {
                       color: "white",
                       textAlign: "center",
                       marginBottom: 20,
-                    }}>
+                    }}
+                  >
                     Preencha o formulário para gerar sua dieta personalizada!
                   </Text>
 
@@ -256,15 +280,14 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
+    backgroundColor: "rgb(7, 7, 7)",
   },
   configContainer: {
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 220,
+    paddingTop: 130,
+    paddingBottom: 50,
   },
   containerLogo: {
     justifyContent: "center",
@@ -276,7 +299,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   configctnerhome: {
-    paddingHorizontal: 25,
+    paddingHorizontal: 10,
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   KeyboardAvoidingView,
@@ -10,21 +10,37 @@ import {
   ScrollView,
   FlatList,
   Modal,
+  StatusBar,
 } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { Picker } from '@react-native-picker/picker';
-import useCustomFonts from '../../assets/fonts/fonts';
 import { db } from "../firebaseconfig";
 import { AntDesign } from '@expo/vector-icons';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const { width } = Dimensions.get('window');
-const imgbg = require('../../assets/images/bgfundo2.png');
 
-const Item = ({ title, desc, onPress, isFavorite, onToggleFavorite }) => (
+interface Artigo {
+  id: string;
+  title: string;
+  desc: string;
+  categoria: string;
+}
+
+interface ItemProps {
+  title: string;
+  desc: string;
+  onPress: () => void;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
+}
+
+const Item = ({ title, desc, onPress, isFavorite, onToggleFavorite }: ItemProps) => (
   <TouchableOpacity style={styles.item} onPress={onPress}>
     <View style={styles.itemHeader}>
-      <Text style={styles.itemTitle}>{title}</Text>
+      <Text style={styles.itemTitle}>
+        {title.length > 30 ? `${title.substring(0, 100)}...` : title}
+      </Text>
       <TouchableOpacity onPress={onToggleFavorite}>
         <AntDesign name={isFavorite ? 'heart' : 'hearto'} size={20} color={isFavorite ? '#00BB83' : '#fff'} />
       </TouchableOpacity>
@@ -36,15 +52,14 @@ const Item = ({ title, desc, onPress, isFavorite, onToggleFavorite }) => (
 );
 
 export default function Artigo() {
-  const fontsLoaded = useCustomFonts();
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState(null);
-  const [artigos, setArtigos] = useState([]);
-  const [filteredArtigos, setFilteredArtigos] = useState([]);
+  const [selectedArticle, setSelectedArticle] = useState<Artigo | null>(null);
+  const [artigos, setArtigos] = useState<Artigo[]>([]);
+  const [filteredArtigos, setFilteredArtigos] = useState<Artigo[]>([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState('todos');
-  const [favoritos, setFavoritos] = useState([]);
-  const [userId, setUserId] = useState(null);
-  const [showFavorites, setShowFavorites] = useState(false); // Nova variável de estado
+  const [favoritos, setFavoritos] = useState<string[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [showFavorites, setShowFavorites] = useState(false);
 
   const auth = getAuth();
 
@@ -67,21 +82,20 @@ export default function Artigo() {
     return unsubscribe;
   }, []);
 
-  const fetchFavorites = async (userId) => {
+  const fetchFavorites = async (userId: string) => {
     try {
       const userDoc = await getDoc(doc(db, 'users', userId));
       if (userDoc.exists()) {
         setFavoritos(userDoc.data().favoritos || []);
-        console.log('Favoritos carregados:', userDoc.data().favoritos);
       }
     } catch (error) {
       console.error('Erro ao buscar favoritos:', error);
     }
   };
 
-  const toggleFavorite = async (artigoId) => {
+  const toggleFavorite = async (artigoId: string) => {
     try {
-      const userDocRef = doc(db, 'users', userId);
+      const userDocRef = doc(db, 'users', userId!);
       const userDoc = await getDoc(userDocRef);
       const isFavorite = favoritos.includes(artigoId);
 
@@ -89,12 +103,10 @@ export default function Artigo() {
         await updateDoc(userDocRef, {
           favoritos: arrayRemove(artigoId),
         });
-        console.log(`Artigo ${artigoId} removido dos favoritos.`);
       } else {
         await updateDoc(userDocRef, {
           favoritos: arrayUnion(artigoId),
         });
-        console.log(`Artigo ${artigoId} adicionado aos favoritos.`);
       }
 
       setFavoritos((prev) =>
@@ -109,10 +121,9 @@ export default function Artigo() {
     const fetchArtigos = async () => {
       const artigosCollection = collection(db, 'artigos');
       const artigoSnapshot = await getDocs(artigosCollection);
-      const artigoList = artigoSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const artigoList = artigoSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Artigo));
       setArtigos(artigoList);
       setFilteredArtigos(artigoList);
-      console.log('Artigos carregados:', artigoList);
     };
 
     fetchArtigos();
@@ -120,15 +131,15 @@ export default function Artigo() {
 
   useEffect(() => {
     if (showFavorites) {
-      setFilteredArtigos(artigos.filter(article => favoritos.includes(article.id)));
+      setFilteredArtigos(artigos.filter((article) => favoritos.includes(article.id)));
     } else if (categoriaSelecionada === 'todos') {
       setFilteredArtigos(artigos);
     } else {
-      setFilteredArtigos(artigos.filter(article => article.categoria === categoriaSelecionada));
+      setFilteredArtigos(artigos.filter((article) => article.categoria === categoriaSelecionada));
     }
   }, [categoriaSelecionada, artigos, favoritos, showFavorites]);
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: Artigo }) => (
     <Item
       title={item.title}
       desc={item.desc}
@@ -143,18 +154,20 @@ export default function Artigo() {
 
   return (
     <View style={styles.imgContainer}>
-      <ImageBackground source={imgbg} style={styles.imgBack}>
+      <ImageBackground style={styles.imgBack}>
         <KeyboardAvoidingView style={styles.background} behavior="padding">
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <ScrollView
+            contentContainerStyle={[
+              { paddingTop: StatusBar.currentHeight }, 
+            ]}
+          >
             <View style={styles.configContainer}>
-              <View style={styles.headerContent}>
+              <View >
                 <View style={styles.headerText}>
                   <Text style={styles.pagTitle}>Artigos</Text>
                   <TouchableOpacity
-                    style={styles.favoriteButton}
                     onPress={() => {
-                      setShowFavorites(prev => !prev);
-                      console.log(showFavorites ? 'Mostrando todos os artigos.' : 'Mostrando favoritos.');
+                      setShowFavorites((prev) => !prev);
                     }}
                   >
                     <AntDesign name={showFavorites ? 'heart' : 'hearto'} size={30} color={showFavorites ? '#00FFb3' : '#fff'} />
@@ -177,9 +190,7 @@ export default function Artigo() {
                 </View>
               </View>
               {filteredArtigos.length === 0 ? (
-                <Text style={styles.noFavoritesText}>
-                  Não há artigos favoritos.
-                </Text>
+                <Text style={styles.noFavoritesText}>Não há artigos favoritos.</Text>
               ) : (
                 <FlatList
                   data={filteredArtigos}
@@ -191,7 +202,7 @@ export default function Artigo() {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-  
+
         <Modal
           animationType="none"
           transparent={true}
@@ -234,32 +245,25 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+    backgroundColor: "rgb(7, 7, 7)",
   },
-  scrollContainer: {
-    paddingVertical: 55,
-  },
+
   configContainer: {
     width: '100%',
     flex: 1,
-    paddingVertical: 20,
-    padding: width >= 390 ? 20 : width >= 360 ? 15 : 13,
-    paddingLeft: 20,
-    top: 10,
+    paddingHorizontal: 10
   },
-
   headerText: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    marginBottom: 20,
+    justifyContent: 'space-between',
   },
   pagTitle: {
     color: '#fff',
-    fontFamily: 'ArchivoBlack',
-    lineHeight: width >= 390 ? 55 : 40,
-    marginBottom: width >= 800 ? 25 : width >= 550 ? 15 : width >= 480 ? 20 : width >= 360 ? 20 : 10,
-    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
+    fontWeight: 'bold',
+    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : 45,
   },
   pickerContainer: {
     borderWidth: 0,
@@ -267,24 +271,31 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   picker: {
-    backgroundColor: '#1E1E1E',
-    height: 50,
+    backgroundColor: '#101010',
+    height: 47,
     width: '100%',
     fontWeight: 'bold',
     color: '#00FFb3',
     fontSize: 16,
     paddingHorizontal: 10,
-    borderWidth: 0,
-  },
+    borderWidth: 1,
+    borderColor: "#252525",  },
   list: {
-    top: 20,
-    paddingBottom: 20,
+    marginTop: 20,
+    marginBottom: 75,
+  },
+  noFavoritesText: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 20,
   },
   item: {
-    backgroundColor: '#1E1E1E',
-    padding: 22,
-    marginVertical: 8,
-    borderRadius: 3,
+    marginBottom: 12,
+    backgroundColor: '#101010',
+    borderWidth: 1,
+    borderColor: "#252525",
+    borderRadius: 5,
+    padding: 15,
   },
   itemHeader: {
     flexDirection: 'row',
@@ -292,27 +303,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 10,
+    fontSize: 18,
     color: '#fff',
+    fontWeight: 'bold',
+    width: '80%',
+    flexWrap: 'wrap',
   },
   itemDesc: {
-    fontSize: 14,
-    color: '#ddd',
+    color: '#fff',
+    marginTop: 10,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalView: {
     backgroundColor: '#1E1E1E',
     borderRadius: 5,
     padding: 20,
-    width: '90%',
-    maxHeight: '85%',
+    width: '95%',
+    maxHeight: '90%',
   },
   modalTitle: {
     fontWeight: 'bold',
@@ -327,23 +339,17 @@ const styles = StyleSheet.create({
   },
   modalFooter: {
     alignItems: 'center',
+    top: 7,
+    backgroundColor: '#00BB83',
+    padding: 10,
   },
   closeButton: {
-    backgroundColor: '#00BB83',
+    backgroundColor: '#1E1E1E',
     borderRadius: 5,
-    padding: 10,
+    paddingVertical: 10
   },
   closeButtonText: {
     color: '#fff',
-    fontSize: 18,
-  },
-  favoriteButton: {
-    marginRight: 3,
-    marginTop: -12,
-  },
-  noFavoritesText: {
-    color: '#fff',
-    marginTop: 20,
     fontSize: 18,
   },
 });

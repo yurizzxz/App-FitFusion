@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, browserLocalPersistence } from "firebase/auth";
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -14,6 +15,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
+
+auth.setPersistence(browserLocalPersistence)
+  .then(() => {
+  })
+  .catch((error) => {
+    console.error("Erro ao configurar persistência:", error);
+  });
+
 const db = getFirestore(app);
 
 export { auth, db };

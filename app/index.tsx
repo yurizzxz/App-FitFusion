@@ -12,7 +12,7 @@ export default function Splash() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace('/begin'); 
-    }, 3000);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [router]);
@@ -39,7 +39,7 @@ export default function Splash() {
 const styles = StyleSheet.create({
   imgContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#050505",
     height: "100%",
   },
   background: {

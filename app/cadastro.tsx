@@ -17,6 +17,9 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "./firebaseconfig";
+import Icon from "react-native-vector-icons/Feather";
+
+const [showPassword, setShowPassword] = useState(false);
 
 export default function Cadastro() {
   const router = useRouter();
@@ -27,6 +30,10 @@ export default function Cadastro() {
 
   const goLogin = () => {
     router.push("/login");
+  };
+
+  const handleGoBack = () => {
+    router.push("/begin");
   };
 
   const handleSignUp = async () => {
@@ -58,10 +65,9 @@ export default function Cadastro() {
   };
   return (
     <View style={styles.imgContainer}>
-      <ImageBackground
-        source={require("../assets/images/login-registro.webp")}
-        style={styles.imgBack}
-      >
+      <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+        <Icon name="arrow-left" size={40} color="#fff" />
+      </TouchableOpacity>
         <KeyboardAvoidingView style={styles.background}>
           <View style={styles.configContainer}>
             <View style={styles.containerLogo}>
@@ -74,7 +80,7 @@ export default function Cadastro() {
               <Text style={styles.welcomeText}>Cadastre-se ao FitFusion!</Text>
 
               <TextInput
-                style={styles.input}
+                style={[styles.input, styles.inputSpacing]}
                 placeholder="Digite seu nome" 
                 placeholderTextColor="#888"
                 autoCorrect={false}
@@ -83,7 +89,7 @@ export default function Cadastro() {
               />
 
               <TextInput
-                style={styles.input}
+                style={[styles.input, styles.inputSpacing]}
                 placeholder="Endereço de email" 
                 placeholderTextColor="#888"
                 autoCorrect={false}
@@ -93,13 +99,19 @@ export default function Cadastro() {
 
               <TextInput
                 placeholderTextColor="#888"
-                placeholder="Senha" 
-                style={styles.input}
+                placeholder="Digite sua senha" 
+                style={[styles.input, styles.inputSpacing]}
                 autoCorrect={false}
-                secureTextEntry={true}
+                secureTextEntry={!showPassword}
                 value={senha}
-                onChangeText={setSenha}
+                onChangeText={(text) => setSenha(text)}
               />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                <Icon name={showPassword ? "eye" : "eye-off"} size={24} color="#888" />
+              </TouchableOpacity>
 
               <TouchableOpacity style={styles.btnSubmit} onPress={handleSignUp}>
                 <Text style={styles.submitText}>Criar conta</Text>
@@ -116,7 +128,6 @@ export default function Cadastro() {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </ImageBackground>
     </View>
   );
 }
@@ -124,16 +135,12 @@ export default function Cadastro() {
 const styles = StyleSheet.create({
   imgContainer: {
     flex: 1,
-  },
-  imgBack: {
-    width: "100%",
-    height: "100%",
+    backgroundColor: "rgb(7, 7, 7)",
   },
   background: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
   },
   configContainer: {
     width: "100%",
@@ -142,7 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   containerLogo: {
-    bottom: 10,
+    top: -40,
     justifyContent: "center",
   },
   logoLogin: {
@@ -157,9 +164,10 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     color: "#fff",
-    marginBottom: 25,
+    marginBottom: 20,
     fontSize: 24,
     fontWeight: "bold",
+    top: -10,
   },
   label: {
     color: "#fff",
@@ -168,26 +176,36 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 16,
   },
+  eyeIcon: {
+    position: "absolute",
+    right: 30,
+    top: 295,
+  },
   input: {
     backgroundColor: "#191919",
     width: "98%",
     marginBottom: 10,
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 30,
     borderColor: "#252525",
-    height: 50,
+    height: 70,
     color: "#fff",
-    fontSize: 17,
+    fontSize: 18,
     paddingHorizontal: 18,
+  },
+  inputSpacing: {
+    marginTop: 20,
   },
   btnSubmit: {
     backgroundColor: "#00BB83",
     marginTop: 1,
-    width: "98%",
+    width: "100%",
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
+    fontWeight: "bold",
+    top: 20,
   },
   submitText: {
     color: "#fff",
@@ -211,5 +229,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     top: 25,
     fontSize: 15,
+  },
+  backButton: {
+    position: "absolute",
+    top: 30,
+    left: 20,
+    zIndex: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#00BB83",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

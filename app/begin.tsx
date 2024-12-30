@@ -30,7 +30,7 @@ export default function Begin() {
   return (
     <View style={styles.imgContainer}>
       <ImageBackground
-        source={require("../assets/images/landing.jpeg")} // Alterar para a imagem de referência
+        source={require("../assets/images/landing.jpeg")}
         style={styles.imgBack}
         resizeMode="cover"
       >
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   configContainer: {
     bottom: 50,
     width: "100%",
-    padding: width > 400 ? 15 : 10,
+    padding: width > 400 ? 15 : 15,
     justifyContent: "center",
   },
   headline: {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
     width: "100%",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 50,
     marginBottom: 15,
     alignItems: "center",
     justifyContent: "center",

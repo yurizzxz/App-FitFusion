@@ -1,184 +1,101 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  KeyboardAvoidingView,
-  Image,
   Text,
-  TouchableOpacity,
+  Image,
   StyleSheet,
-  ImageBackground,
-  Dimensions,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
   Modal,
   TextInput,
-  ScrollView,
-  Pressable,
-  Alert,
 } from "react-native";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import {
   getAuth,
-  updatePassword,
-  updateEmail,
-  signOut,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  updateProfile,
   onAuthStateChanged,
+  updateEmail,
+  updatePassword,
+  signOut,
 } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseconfig";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
 
-const { width } = Dimensions.get("window");
-const imgbg = "../../assets/images/bgfundo2.png";
-
-const profilePics = [
-  require("../../assets/images/profile1.jpg"),
-  require("../../assets/images/profile4.jpg"),
-  require("../../assets/images/profile2.jpg"),
-  require("../../assets/images/profile3.jpg"),
-  require("../../assets/images/musculacao.jpg"),
-  require("../../assets/images/calistenia.png"),
-  require("../../assets/images/aerobico.jpg"),
-  require("../../assets/images/intensa.jpg"),
-];
-
-export default function Config({ navigation }) {
+const UserProfileScreen = () => {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [picModalVisible, setPicModalVisible] = useState(false);
-  const [profilePic, setProfilePic] = useState(profilePics[0]);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [senhaConfirmacao, setSenhaConfirmacao] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
   const auth = getAuth();
   const router = useRouter();
   const user = auth.currentUser;
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        if (user) {
+      if (user) {
+        try {
           const docRef = doc(db, "users", user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const userData = docSnap.data();
-            setUserName(userData.name);
-            setUserEmail(userData.email);
+            setUserName(userData.name || "Nome não disponível");
+            setUserEmail(userData.email || "E-mail não disponível");
           } else {
-            console.log("No such document!");
+            console.log("Nenhum dado encontrado para este usuário");
           }
+        } catch (error) {
+          console.error("Erro ao buscar dados do usuário:", error);
         }
-      } catch (error) {
-        console.error("Erro ao buscar dados do usuário:", error);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
-   
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        Alert.alert("Sessão expirada", "Sua sessão expirou. Por favor, faça login novamente.");
-        router.push('../begin');
-      } else {
-        fetchUserData();
-      }
-    });
-
-    const intervalId = setInterval(() => {
-      if (auth.currentUser) {
-        const keepAlive = async () => {
-          try {
-            const docRef = doc(db, "users", auth.currentUser.uid);
-            await getDoc(docRef);
-          } catch (error) {
-            console.error("Erro ao manter a sessão ativa:", error);
-          }
-        };
-        keepAlive();
-      }
-    }, 604800000); // 1 minuto (60000 ms)
-
-    return () => {
-      clearInterval(intervalId);
-      unsubscribe(); 
-    };
-  }, [auth, navigation]);
-
-  const getErrorMessage = (error) => {
-    if (error.code === "auth/user-not-found") {
-      return "Usuário não encontrado";
-    }
-    if (error.code === "auth/wrong-password") {
-      return "Senha inválida";
-    }
-    return error.message;
-  };
-
-  const reauthenticate = async (password) => {
-    const credential = EmailAuthProvider.credential(user.email, password);
-    try {
-      await reauthenticateWithCredential(user, credential);
-      console.log("Reautenticação bem-sucedida.");
-    } catch (error) {
-      console.error("Erro ao reautenticar:", error);
-      Alert.alert("Erro", "Reautenticação falhou. Por favor, verifique sua senha.");
-      throw error;
-    }
-  };
+    fetchUserData();
+  }, [auth, router]);
 
   const handleConfirmSave = async () => {
+    if (!user) {
+      Alert.alert(
+        "Erro",
+        "Usuário não autenticado. Por favor, faça login novamente."
+      );
+      return;
+    }
+
     try {
-      if (!user) {
-        Alert.alert("Erro", "Usuário não autenticado. Por favor, faça login novamente.");
-        return;
-      }
-  
-      if (newPassword || userEmail !== user.email) {
-        if (!senhaConfirmacao) {
-          Alert.alert("Erro", "Você precisa fornecer sua senha atual para alterar o e-mail ou a senha.");
-          return;
-        }
-        await reauthenticate(senhaConfirmacao);
-      }
-  
-      if (userName !== "") {
+      if (newName !== "") {
         const docRef = doc(db, "users", user.uid);
-        await updateDoc(docRef, { name: userName });
+        await updateDoc(docRef, { name: newName });
+        setUserName(newName);
+        Alert.alert("Sucesso", "Nome atualizado com sucesso!");
       }
-  
-      if (userEmail !== user.email) {
-        await updateEmail(user, userEmail);
-        Alert.alert("Sucesso", "E-mail atualizado com sucesso! Faça login novamente.");
+
+      if (newEmail !== user.email) {
+        await updateEmail(user, newEmail);
+        setUserEmail(newEmail);
+        Alert.alert(
+          "Sucesso",
+          "E-mail atualizado com sucesso! Faça login novamente."
+        );
         await signOut(auth);
         return;
-      }
-  
-      if (newPassword && newPassword === confirmPassword) {
-        await updatePassword(user, newPassword);
-        Alert.alert("Sucesso", "Senha atualizada com sucesso!");
-        await signOut(auth);
-      } else if (newPassword && newPassword !== confirmPassword) {
-        Alert.alert("Erro", "As senhas não coincidem. Por favor, tente novamente.");
-        return;
-      }
-  
-      if (!newPassword && userEmail === user.email) {
-        Alert.alert("Sucesso", "Dados atualizados com sucesso!");
       }
     } catch (error) {
-      const errorMessage = getErrorMessage(error);
-      Alert.alert("Erro", errorMessage);
-      console.error("Erro ao atualizar dados:", errorMessage);
-    } finally {
-      setNewPassword("");
-      setConfirmPassword("");
-      setSenhaConfirmacao("");
-      setModalVisible(false);
+      console.error("Erro ao atualizar dados:", error);
+      Alert.alert("Erro", "Houve um erro ao atualizar seus dados.");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push("/begin");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      Alert.alert("Erro", "Houve um erro ao tentar fazer logout.");
     }
   };
 
@@ -191,242 +108,211 @@ export default function Config({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <ImageBackground source={require(imgbg)} style={styles.imgBack}>
-        <KeyboardAvoidingView style={styles.background}>
-          <View style={styles.contentpage}>
-            <View style={styles.cardContainer}>
-              <TouchableOpacity onPress={() => setPicModalVisible(true)}>
-                <Image source={profilePic} style={styles.card} />
-              </TouchableOpacity>
-              <View style={styles.usersInfo}>
-                <Text style={styles.cardText}>{userName}</Text>
-                <Text style={styles.cardEmail}>{userEmail}</Text>
-                <TouchableOpacity
-                  style={styles.btnProfile}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Text style={styles.submitText}>Editar Perfil</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => signOut(auth).then(() => navigation.navigate("../begin"))}>
-                  <Text style={styles.logoutText}>Fazer Logout</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Image
+          source={{ uri: "https://via.placeholder.com/100" }}
+          style={styles.profileImage}
+        />
+        <Text style={styles.name}>{userName}</Text>
+        <Text style={styles.role}>{userEmail}</Text>
+      </View>
+
+      <View style={styles.settingsContainer}>
+        <Text style={styles.settingsTitle}>Ações</Text>
+
+        {[
+          { title: "Editar Perfil", icon: "person" },
+          { title: "Notificações", icon: "notifications" },
+        ].map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.settingRow}
+            onPress={() => {
+              if (item.title === "Editar Perfil") {
+                setNewName(userName);
+                setNewEmail(userEmail);
+                setModalVisible(true);
+              }
+            }}
+          >
+            <Icon name={item.icon} size={24} color="#fff" />
+            <Text style={styles.settingText}>{item.title}</Text>
+            <Icon name="chevron-right" size={24} color="#252525" />
+          </TouchableOpacity>
+        ))}
+
+        <View>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Text style={styles.logoutButtonText}>Sair</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Editar Perfil</Text>
+
+            <TextInput
+              style={styles.input}
+              value={newName}
+              onChangeText={setNewName}
+              placeholder="Novo Nome"
+              placeholderTextColor="#888"
+            />
+
+            <TextInput
+              style={styles.input}
+              value={newEmail}
+              onChangeText={setNewEmail}
+              placeholder="Novo E-mail"
+              placeholderTextColor="#888"
+            />
+
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleConfirmSave}
+            >
+              <Text style={styles.saveButtonText}>Salvar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.cancelButtonText}>Cancelar</Text>
+            </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-
-        {/* modal perfil*/}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <Pressable
-            style={styles.modalContainer}
-            onPress={() => setModalVisible(false)}
-          >
-            <View style={styles.modalContent}>
-              <Text style={styles.label}>Nome</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Nome"
-                value={userName}
-                onChangeText={setUserName}
-              />
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={userEmail}
-                onChangeText={setUserEmail}
-              />
-              <Text style={styles.label}>Nova senha</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite sua nova senha"
-                value={newPassword}
-                secureTextEntry
-                onChangeText={setNewPassword}
-              />
-              <Text style={styles.label}>Confirmar nova senha</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Confirme sua nova senha"
-                value={confirmPassword}
-                secureTextEntry
-                onChangeText={setConfirmPassword}
-              />
-              <Text style={styles.label}>Senha atual</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Digite sua senha atual"
-                value={senhaConfirmacao}
-                secureTextEntry
-                onChangeText={setSenhaConfirmacao}
-              />
-              <TouchableOpacity style={styles.btnSubmit} onPress={handleConfirmSave}>
-                <Text style={styles.submitText}>Confirmar Alterações</Text>
-              </TouchableOpacity>
-            </View>
-          </Pressable>
-        </Modal>
-
-        {/* modal foto d perfil*/}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={picModalVisible}
-          onRequestClose={() => setPicModalVisible(false)}
-        >
-          <Pressable
-            style={styles.modalContainer}
-            onPress={() => setPicModalVisible(false)}
-          >
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Escolha uma foto de perfil</Text>
-              <ScrollView horizontal contentContainerStyle={styles.scrollContainer}>
-                {profilePics.map((item, index) => (
-                  <Pressable
-                    key={index}
-                    style={styles.picOption}
-                    onPress={() => {
-                      setProfilePic(item);
-                      setPicModalVisible(false);
-                    }}
-                  >
-                    <Image source={item} style={styles.picImage} />
-                  </Pressable>
-                ))}
-              </ScrollView>
-              <TouchableOpacity style={styles.btnClose} onPress={() => setPicModalVisible(false)}>
-                <Text style={styles.submitText}>Fechar</Text>
-              </TouchableOpacity>
-            </View>
-          </Pressable>
-        </Modal>
-      </ImageBackground>
-    </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
-}
-
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  imgBack: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  background: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
-  },
-  contentpage: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cardContainer: {
-    alignItems: "center",
-    margin: 10,
-    borderRadius: 20,
-  },
-  card: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 20,
-  },
-  usersInfo: {
-    alignItems: "center",
-  },
-  cardEmail: {
-    marginTop: 5,
-    color: "#fff",
-    fontSize: 15,
-  },
-  cardText: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  btnProfile: {
-    backgroundColor: "#00BB83",
-    marginTop: 15,
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  submitText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "90%",
-    backgroundColor: "#191919",
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitle: {
-    color: "#fff",
-    fontSize: 18,
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  scrollContainer: {
-    alignItems: "center",
-  },
-  picOption: {
-    margin: 5,
+    backgroundColor: "rgb(7, 7, 7)",
     padding: 10,
   },
-  picImage: {
+  header: {
+    alignItems: "center",
+    padding: 30,
+    backgroundColor: "#00bb83",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    marginVertical: 10,
   },
-  label: {
+  name: {
+    fontSize: 20,
+    fontWeight: "bold",
     color: "#fff",
+  },
+  role: {
+    fontSize: 16,
+    color: "#eee",
     marginBottom: 10,
   },
-  input: {
-    backgroundColor: "#252525",
-    marginBottom: 15,
+  settingsContainer: {
+    paddingHorizontal: 10,
+    marginTop: 30,
+  },
+  settingsTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#fff",
+  },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginVertical: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#252525",
+  },
+  settingText: {
+    flex: 1,
+    color: "#fff",
+    marginLeft: 10,
+  },
+  saveButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#00bb83",
     borderRadius: 5,
-    height: 44,
+    alignItems: "center",
+  },
+  saveButtonText: {
     color: "#fff",
     fontSize: 16,
-    paddingHorizontal: 10,
   },
-  btnSubmit: {
-    backgroundColor: "#00BB83",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
+  modalBackground: {
+    flex: 1,
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
-  logoutText: {
-    color: 'red',
+  modalContainer: {
+    width: "90%",
+    backgroundColor: "#101010",
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderWidth: 1,
+    borderColor: "#252525",
   },
-  btnClose: {
-    marginTop: 20,
-    backgroundColor: "#00BB83",
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#fff",
+  },
+  input: {
+    width: "100%",
     padding: 10,
-    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#252525",
+    color: "#fff",
+    borderRadius: 5,
+  },
+  cancelButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#ccc",
+    borderRadius: 5,
     alignItems: "center",
-    justifyContent: "center",
+  },
+  cancelButtonText: {
+    color: "#000",
+    fontSize: 16,
+  },
+  logoutButton: {
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: "#f44336",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
+
+export default UserProfileScreen;

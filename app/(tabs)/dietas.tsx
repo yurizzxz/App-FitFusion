@@ -2,24 +2,36 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   KeyboardAvoidingView,
-  ImageBackground,
   Text,
   StyleSheet,
   Dimensions,
-  ScrollView, 
+  ScrollView,
 } from 'react-native';
 
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import useCustomFonts from "../../assets/fonts/fonts"; 
+import useCustomFonts from "../../assets/fonts/fonts";
+import Constants from "expo-constants";
 
 const { width } = Dimensions.get("window");
-const imgbg = require("../../assets/images/bgfundo2.png");
+const statusBarHeight = Constants.statusBarHeight;
+
+interface Alimento {
+  nome: string;
+  horario: string;
+  alimentos: string[];
+}
+
+interface NutritionData {
+  data: {
+    refeicoes: Alimento[];
+  };
+}
 
 export default function Dietas() {
   const fontsLoaded = useCustomFonts();
-  const [nutritionData, setNutritionData] = useState(null);
+  const [nutritionData, setNutritionData] = useState<NutritionData | null>(null);
 
   const router = useRouter();
 
@@ -29,83 +41,76 @@ export default function Dietas() {
         try {
           const storedData = await AsyncStorage.getItem('nutritionData');
           if (storedData) {
-            setNutritionData(JSON.parse(storedData));
+            setNutritionData(JSON.parse(storedData) as NutritionData);
           }
         } catch (error) {
           console.error("Erro ao obter dados:", error);
         }
       };
-  
+
       fetchNutritionData();
-    }, []) 
+    }, [])
   );
 
   return (
-    <View style={styles.imgContainer}>
-      <ImageBackground source={imgbg} style={styles.imgBack}>
-        <KeyboardAvoidingView style={styles.background}>
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.title}>Sua dieta está pronta para você!</Text>
-            {nutritionData ? (
-              <View>
-                {nutritionData.data.refeicoes.map((refeicao, index) => (
-                  <View key={index} style={styles.card}>
-                    <Text style={styles.cardSubtitle}>{refeicao.nome}</Text>
-                    <Text style={styles.cardText}>
-                      <Text style={styles.bold}>Horário:</Text> {refeicao.horario}
-                    </Text>
-                    <Text style={styles.cardText}>
-                      <Text style={styles.bold}>Alimentos:</Text>
-                    </Text>
-                    {Array.isArray(refeicao.alimentos) && refeicao.alimentos.map((alimento, alimentoIndex) => (
-                      <Text key={alimentoIndex} style={styles.cardText}>{alimento}</Text>
-                    ))}
-                  </View>
-                ))}
-              </View>
-            ) : (
-              <Text style={styles.noDataText}>Não foram encontrados dados nutricionais.</Text>
-            )}
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </ImageBackground>
+    <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.background}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Text style={styles.title}>Sua dieta está pronta para você!</Text>
+          {nutritionData ? (
+            <View>
+              {nutritionData.data.refeicoes.map((refeicao, index) => (
+                <View key={index} style={styles.card}>
+                  <Text style={styles.cardSubtitle}>{refeicao.nome}</Text>
+                  <Text style={styles.cardText}>
+                    <Text style={styles.bold}>Horário:</Text> {refeicao.horario}
+                  </Text>
+                  <Text style={styles.cardText}>
+                    <Text style={styles.bold}>Alimentos:</Text>
+                  </Text>
+                  {Array.isArray(refeicao.alimentos) && refeicao.alimentos.map((alimento, alimentoIndex) => (
+                    <Text key={alimentoIndex} style={styles.cardText}>{alimento}</Text>
+                  ))}
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text style={styles.noDataText}>Não foram encontrados dados nutricionais.</Text>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  imgContainer: {
+  container: {
     flex: 1,
-  },
-  imgBack: {
-    width: "100%",
-    height: "100%",
+    backgroundColor: "rgb(7, 7, 7)",
   },
   background: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
   },
   scrollContainer: {
-    paddingTop: 80,
-    padding: 20,
+    paddingTop: 40,
+    paddingHorizontal: 10,
     flexGrow: 1,
-    paddingBottom: 80,
+    paddingBottom: 70,
   },
   title: {
-    fontFamily: 'ArchivoBlack',
     fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 20,
-    
   },
   card: {
     backgroundColor: '#101010',
-    borderColor: '#101010',
     borderWidth: 1,
-    borderRadius: 8,
+    borderColor: "#252525",
+    borderRadius: 5,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 13,
+
   },
   cardSubtitle: {
     fontSize: 20,
@@ -123,7 +128,5 @@ const styles = StyleSheet.create({
   },
   noDataText: {
     color: '#fff',
-    textAlign: 'center',
-    marginTop: 20,
   },
 });

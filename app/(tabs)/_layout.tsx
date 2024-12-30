@@ -14,30 +14,28 @@ export default function TabLayout() {
           tabBarActiveTintColor: '#00BB83',
           tabBarInactiveTintColor: '#FFFFFF',
           tabBarStyle: {
-            backgroundColor: '#0B0B0B',
-            borderTopColor: 'transparent', 
-            height: width >= 395 ? 70 : width >= 360 ? 70 : 58,
-            backgroundColor: '#0E0E0E',
+            backgroundColor: '#0B0B0C',
             borderTopColor: 'transparent',
+            height: width >= 395 ? 70 : width >= 360 ? 70 : 58,
             paddingHorizontal: 15,
             position: 'absolute',
-            bottom: 5, 
-            borderRadius: 50, 
+            borderRadius: 0,
             zIndex: 1000,
+            paddingTop: 12,
+            borderWidth: 0
           },
           headerShown: false,
           tabBarLabelStyle: {
-            display: 'none', 
+            display: 'none',
           },
           tabBarIconStyle: {
-            position: 'relative', 
+            position: 'relative',
           },
         }}
       >
         <Tabs.Screen
           name="home"
           options={{
-            title: 'Home',
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'home' : 'home-outline'} color={color} />
@@ -49,7 +47,6 @@ export default function TabLayout() {
         <Tabs.Screen
           name="dietas"
           options={{
-            title: 'Dietas',
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
@@ -61,7 +58,6 @@ export default function TabLayout() {
         <Tabs.Screen
           name="treinos"
           options={{
-            title: 'Treinos',
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
@@ -73,7 +69,6 @@ export default function TabLayout() {
         <Tabs.Screen
           name="artigos"
           options={{
-            title: 'Artigos',
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
                 <TabBarIcon size={30} name={focused ? 'document' : 'document-outline'} color={color} />
@@ -85,10 +80,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="config"
           options={{
-            title: 'Config',
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
-                <TabBarIcon size={30} name={focused ? 'settings' : 'settings-outline'} color={color} />
+                <TabBarIcon size={30} name={focused ? 'person' : 'person-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
             ),
@@ -103,7 +97,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#00BB83', 
+    backgroundColor: '#00BB83',
   },
   iconContainer: {
     justifyContent: 'center',
@@ -115,6 +109,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#00BB83',
     borderRadius: 1.5,
     position: 'absolute',
-    bottom: -17, 
+    bottom: -17,
   },
 });

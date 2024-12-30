@@ -15,7 +15,7 @@ const NutritionForm = () => {
   const [nutritionData, setNutritionData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (name, value) => {
+  const handleChange = (name: string, value: string) => {
     setFormData({
       ...formData,
       [name]: value,
@@ -54,7 +54,7 @@ const NutritionForm = () => {
     });
   };
 
-  const formatRefeicoes = (refeicoes) => {
+  const formatRefeicoes = (refeicoes: any) => {
     if (Array.isArray(refeicoes)) {
       return refeicoes.map((refeicao) => {
         if (typeof refeicao === 'object' && refeicao !== null) {
