@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -6,11 +6,11 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
-} from 'react-native';
+} from "react-native";
 
 import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import useCustomFonts from "../../assets/fonts/fonts";
 import Constants from "expo-constants";
 
@@ -31,7 +31,9 @@ interface NutritionData {
 
 export default function Dietas() {
   const fontsLoaded = useCustomFonts();
-  const [nutritionData, setNutritionData] = useState<NutritionData | null>(null);
+  const [nutritionData, setNutritionData] = useState<NutritionData | null>(
+    null
+  );
 
   const router = useRouter();
 
@@ -39,7 +41,7 @@ export default function Dietas() {
     React.useCallback(() => {
       const fetchNutritionData = async () => {
         try {
-          const storedData = await AsyncStorage.getItem('nutritionData');
+          const storedData = await AsyncStorage.getItem("nutritionData");
           if (storedData) {
             setNutritionData(JSON.parse(storedData) as NutritionData);
           }
@@ -68,14 +70,19 @@ export default function Dietas() {
                   <Text style={styles.cardText}>
                     <Text style={styles.bold}>Alimentos:</Text>
                   </Text>
-                  {Array.isArray(refeicao.alimentos) && refeicao.alimentos.map((alimento, alimentoIndex) => (
-                    <Text key={alimentoIndex} style={styles.cardText}>{alimento}</Text>
-                  ))}
+                  {Array.isArray(refeicao.alimentos) &&
+                    refeicao.alimentos.map((alimento, alimentoIndex) => (
+                      <Text key={alimentoIndex} style={styles.cardText}>
+                        {alimento}
+                      </Text>
+                    ))}
                 </View>
               ))}
             </View>
           ) : (
-            <Text style={styles.noDataText}>Não foram encontrados dados nutricionais.</Text>
+            <Text style={styles.noDataText}>
+              Não foram encontrados dados nutricionais.
+            </Text>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
@@ -92,41 +99,39 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContainer: {
-    paddingTop: 40,
     paddingHorizontal: 10,
     flexGrow: 1,
     paddingBottom: 70,
   },
   title: {
-    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : width >= 475 ? 45 : width >= 360 ? 45 : 40,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : 45,
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#101010',
+    backgroundColor: "#101010",
     borderWidth: 1,
     borderColor: "#252525",
     borderRadius: 5,
     padding: 15,
     marginBottom: 13,
-
   },
   cardSubtitle: {
     fontSize: 20,
     marginBottom: 5,
-    fontWeight: 'bold',
-    color: '#00BB83',
+    fontWeight: "bold",
+    color: "#00BB83",
   },
   cardText: {
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
     marginTop: 5,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   noDataText: {
-    color: '#fff',
+    color: "#fff",
   },
 });
