@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -22,37 +22,6 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  useEffect(() => {
-    const loadCredentials = async () => {
-      try {
-        const savedCredentials = await AsyncStorage.getItem("userCredentials");
-        const savedRememberMe = await AsyncStorage.getItem("rememberMe");
-
-        if (savedCredentials && JSON.parse(savedRememberMe)) {
-          const { savedEmail, savedSenha } = JSON.parse(savedCredentials);
-          setEmail(savedEmail);
-          setSenha(savedSenha);
-          setRememberMe(true);
-
-          handleAutoLogin(savedEmail, savedSenha);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar credenciais salvas:", error);
-      }
-    };
-
-    loadCredentials();
-  }, []);
-
-  const handleAutoLogin = async (email: string, senha: string) => {
-    try {
-      await signInWithEmailAndPassword(auth, email, senha);
-      router.push("/(tabs)/home");
-    } catch (error) {
-      console.error("Erro no login automático:", error.message);
-    }
-  };
 
   const handleLogin = async () => {
     try {
@@ -89,7 +58,6 @@ export default function Login() {
 
   return (
     <View style={styles.imgContainer}>
-
       <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
         <Icon name="arrow-left" size={40} color="#fff" />
       </TouchableOpacity>
@@ -195,7 +163,8 @@ const styles = StyleSheet.create({
   containerInput: {
     alignItems: "center",
     justifyContent: "center",
-    width: "90%",
+    width: "100%",
+    paddingHorizontal: 20,
   },
   welcomeText: {
     color: "#fff",
@@ -206,10 +175,10 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "#191919",
-    width: "98%",
+    width: "100%",
     marginBottom: 10,
     borderWidth: 1,
-    borderRadius: 30,
+    borderRadius: 10,
     borderColor: "#252525",
     height: 70,
     color: "#fff",
@@ -250,10 +219,10 @@ const styles = StyleSheet.create({
   },
   btnSubmit: {
     backgroundColor: "#00BB83",
-    marginTop: 1,
+    marginTop: 5,
     width: "100%",
     padding: 15,
-    borderRadius: 30,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     fontWeight: "bold",

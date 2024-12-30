@@ -78,6 +78,7 @@ export default function Home() {
         (docSnap) => {
           if (docSnap.exists()) {
             setNome(docSnap.data().name || "Usuário");
+            console.log("Usuário autenticado:", user.email); 
           } else {
             console.log("Nenhum documento encontrado!");
           }

@@ -9,7 +9,7 @@ import {
   Pressable,
 } from "react-native";
 import Constants from "expo-constants";
-import { getAuth, User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { collection, query, where, getDocs, QuerySnapshot } from 'firebase/firestore';
 import { db } from "../firebaseconfig";
 
@@ -29,14 +29,22 @@ export default function Treino() {
 
   useEffect(() => {
     const auth = getAuth();
-    const user = auth.currentUser;
 
-    if (user) {
-      setEmailUsuario(user.email || "");
-      setIsUserLoggedIn(true);
-    } else {
-      setIsUserLoggedIn(false);
-    }
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            setEmailUsuario(user.email || "");
+            setIsUserLoggedIn(true);
+            console.log("Você está logado", user.email)
+          } else {
+            setIsUserLoggedIn(false);
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Erro ao definir persistência:", error);
+      });
   }, []);
 
   useEffect(() => {

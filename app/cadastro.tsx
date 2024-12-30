@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   containerLogo: {
-    top: -40,
     justifyContent: "center",
   },
   logoLogin: {
@@ -160,7 +159,8 @@ const styles = StyleSheet.create({
     top: 0,
     alignItems: "center",
     justifyContent: "center",
-    width: "90%",
+    width: "100%",
+    paddingHorizontal: 20,
   },
   welcomeText: {
     color: "#fff",
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: "absolute",
-    right: 30,
+    right: 50,
     top: 295,
   },
   input: {
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     width: "98%",
     marginBottom: 10,
     borderWidth: 1,
-    borderRadius: 30,
+    borderRadius: 10,
     borderColor: "#252525",
     height: 70,
     color: "#fff",
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
     width: "100%",
     padding: 15,
-    borderRadius: 30,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     fontWeight: "bold",
