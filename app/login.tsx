@@ -208,17 +208,17 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "#191919",
     width: "100%",
-    marginBottom: 10,
+    marginBottom: 15,
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#252525",
     height: 70,
     color: "#fff",
     fontSize: 18,
-    paddingHorizontal: 18,
+    paddingHorizontal: 25,
   },
   inputSpacing: {
-    marginTop: 20,
+    marginTop: 0,
   },
   passwordContainer: {
     position: "relative",

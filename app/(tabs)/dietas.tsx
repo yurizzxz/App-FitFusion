@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import useCustomFonts from "../../assets/fonts/fonts";
 import Constants from "expo-constants";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 const statusBarHeight = Constants.statusBarHeight;
@@ -56,9 +57,6 @@ export default function Dietas() {
 
   return (
     <View style={styles.container}>
-      {/* StatusBar configurado com fundo escuro e texto claro */}
-      <StatusBar style="light" backgroundColor="rgb(7, 7, 7)" />
-
       <KeyboardAvoidingView style={styles.background}>
         <ScrollView
           contentContainerStyle={[
@@ -66,7 +64,16 @@ export default function Dietas() {
             { paddingTop: statusBarHeight },
           ]}
         >
-          <Text style={styles.title}>Sua dieta está pronta para você!</Text>
+          <View style={styles.header}>
+            <Text style={styles.title}>Dieta</Text>
+            <MaterialIcons
+              name="notifications-none"
+              size={30}
+              color="#fff"
+              style={styles.icon}
+              onPress={() => router.push({ pathname: "/notifications" })}
+            />
+          </View>
           {nutritionData ? (
             <View>
               {nutritionData.data.refeicoes.map((refeicao, index) => (
@@ -112,11 +119,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 70,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 30,
+  },
   title: {
-    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : 45,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 20,
+  },
+  icon: {
+    marginRight: 0,
   },
   card: {
     backgroundColor: "#101010",

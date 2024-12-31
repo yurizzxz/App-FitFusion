@@ -12,6 +12,8 @@ import Constants from "expo-constants";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
+import { useRouter } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface Treino {
   name: string;
@@ -27,10 +29,11 @@ export default function Treino() {
   const [treinos, setTreinos] = useState<Treino[] | null>(null);
   const [selectedTreino, setSelectedTreino] = useState<Treino | null>(null);
 
+  const router = useRouter();
+
   useEffect(() => {
     const auth = getAuth();
 
- 
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setEmailUsuario(user.email || "");
@@ -78,10 +81,18 @@ export default function Treino() {
       <KeyboardAvoidingView style={styles.background}>
         <View style={styles.configContainer}>
           <View style={styles.headerText}>
-            <Text style={styles.pagTitle}>Selecione o seu treino</Text>
-            <Text style={styles.pagDescription}>
-              Selecione o treino de acordo com sua disponibilidade...
-            </Text>
+            <Text style={styles.pagTitle}>Treino</Text>
+            <View style={styles.iconContainer}>
+              <Pressable
+                onPress={() => router.push({ pathname: "/notifications" })}
+              >
+                <MaterialIcons
+                  name="notifications-none"
+                  size={30}
+                  color="#fff"
+                />
+              </Pressable>
+            </View>
           </View>
 
           {!isUserLoggedIn ? (
@@ -132,7 +143,8 @@ export default function Treino() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgb(7, 7, 7)",  },
+    backgroundColor: "rgb(7, 7, 7)",
+  },
   background: {
     flex: 1,
   },
@@ -144,12 +156,21 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   headerText: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 20,
+    justifyContent: "space-between",
+  },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   pagTitle: {
-    color: "#00BB83",
+    color: "#fff",
     fontWeight: "bold",
-    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : 45,    marginBottom: 10,
+    fontSize: 30,
   },
   pagDescription: {
     color: "#A0A0A0",
@@ -217,9 +238,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   noTreinoText: {
-    color: "#A0A0A0",
-    fontSize: 16,
-    marginTop: 20,
-    textAlign: "center",
+    color: "#ffffff",
+    fontSize: 14,
   },
 });

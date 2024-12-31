@@ -1,34 +1,36 @@
-import React, { useEffect } from "react";
-import { View, Image, StyleSheet, KeyboardAvoidingView, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Image, StyleSheet, KeyboardAvoidingView, Dimensions, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from 'react-native';
 import 'react-native-reanimated';
 
-
 export default function Splash() {
-  
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace('/begin'); 
-    }, 100);
+      setLoading(false);
+      router.replace('/begin');
+    }, 2000); 
 
     return () => clearTimeout(timer);
   }, [router]);
 
   return (
-    
-    
     <View style={styles.imgContainer}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView style={styles.background}>
         <View style={styles.configContainer}>
           <View style={styles.containerLogo}>
-            <Image
-              style={styles.logoSplash}
-              source={require("../assets/images/logo-verde.png")}
-            />
+            {loading ? (
+              <ActivityIndicator size="large" color="#00BB83" />
+            ) : (
+              <Image
+                style={styles.logoSplash}
+                source={require("../assets/images/logo-verde.png")}
+              />
+            )}
           </View>
         </View>
       </KeyboardAvoidingView>

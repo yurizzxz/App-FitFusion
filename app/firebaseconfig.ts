@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, browserLocalPersistence } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { config } from "react-native-dotenv"; // Importando o dotenv
+import { config } from "react-native-dotenv"; 
 
-// Configurações do Firebase a partir das variáveis de ambiente
 const firebaseConfig = {
   apiKey: config.FIREBASE_API_KEY,
   authDomain: config.FIREBASE_AUTH_DOMAIN,
