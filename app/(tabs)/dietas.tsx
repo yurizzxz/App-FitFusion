@@ -7,7 +7,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-
+import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -56,8 +56,16 @@ export default function Dietas() {
 
   return (
     <View style={styles.container}>
+      {/* StatusBar configurado com fundo escuro e texto claro */}
+      <StatusBar style="light" backgroundColor="rgb(7, 7, 7)" />
+
       <KeyboardAvoidingView style={styles.background}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            { paddingTop: statusBarHeight },
+          ]}
+        >
           <Text style={styles.title}>Sua dieta está pronta para você!</Text>
           {nutritionData ? (
             <View>
@@ -94,6 +102,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "rgb(7, 7, 7)",
+    paddingTop: 30,
   },
   background: {
     flex: 1,

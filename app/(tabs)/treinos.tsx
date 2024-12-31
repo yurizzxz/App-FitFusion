@@ -9,8 +9,8 @@ import {
   Pressable,
 } from "react-native";
 import Constants from "expo-constants";
-import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { collection, query, where, getDocs, QuerySnapshot } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseconfig";
 
 interface Treino {
@@ -30,45 +30,42 @@ export default function Treino() {
   useEffect(() => {
     const auth = getAuth();
 
-    setPersistence(auth, browserLocalPersistence)
-      .then(() => {
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
-            setEmailUsuario(user.email || "");
-            setIsUserLoggedIn(true);
-            console.log("Você está logado", user.email)
-          } else {
-            setIsUserLoggedIn(false);
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Erro ao definir persistência:", error);
-      });
+ 
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setEmailUsuario(user.email || "");
+        setIsUserLoggedIn(true);
+        console.log("Você está logado", user.email);
+      } else {
+        setIsUserLoggedIn(false);
+      }
+    });
   }, []);
 
   useEffect(() => {
     if (isUserLoggedIn && emailUsuario) {
-      const fetchPresetData = async () => {
-        try {
-          const presetsRef = collection(db, "presets");
-          const q = query(presetsRef, where("assignedUser", "==", emailUsuario));
-          const querySnapshot: QuerySnapshot = await getDocs(q);
+      const presetsRef = collection(db, "presets");
+      const q = query(
+        presetsRef,
+        where("assignedUser", "array-contains", emailUsuario)
+      );
 
-          if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
-              const data = doc.data();
-              setTreinos(data.workouts as Treino[]);
-            });
-          } else {
-            setTreinos(null);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar dados de preset:", error);
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const treinosAtualizados: Treino[] = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.workouts) {
+              treinosAtualizados.push(...(data.workouts as Treino[]));
+            }
+          });
+          setTreinos(treinosAtualizados);
+        } else {
+          setTreinos(null);
         }
-      };
+      });
 
-      fetchPresetData();
+      return () => unsubscribe();
     }
   }, [isUserLoggedIn, emailUsuario]);
 
@@ -88,36 +85,43 @@ export default function Treino() {
           </View>
 
           {!isUserLoggedIn ? (
-            <Text style={styles.noTreinoText}>Você precisa estar logado para acessar os treinos.</Text>
-          ) : (
-            treinos ? (
-              <View>
-                <View style={styles.buttonContainer}>
-                  {treinos.map((treino, index) => (
-                    <Pressable 
-                      key={index} 
-                      style={styles.selectButton} 
-                      onPress={() => handleSelectTreino(treino)}
-                    >
-                      <Text style={styles.buttonText}>{treino.name}</Text>
-                    </Pressable>
+            <Text style={styles.noTreinoText}>
+              Você precisa estar logado para acessar os treinos.
+            </Text>
+          ) : treinos ? (
+            <View>
+              <View style={styles.buttonContainer}>
+                {treinos.map((treino, index) => (
+                  <Pressable
+                    key={index}
+                    style={styles.selectButton}
+                    onPress={() => handleSelectTreino(treino)}
+                  >
+                    <Text style={styles.buttonText}>{treino.name}</Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              {selectedTreino ? (
+                <View style={styles.treinoCard}>
+                  <Text style={styles.treinoText}>{selectedTreino.name}</Text>
+                  {selectedTreino.exercises.map((exercise, idx) => (
+                    <View key={idx} style={styles.exerciseItem}>
+                      <View style={styles.bulletPoint}></View>
+                      <Text style={styles.exerciseText}>{exercise}</Text>
+                    </View>
                   ))}
                 </View>
-
-                {selectedTreino ? (
-                  <View style={styles.treinoCard}>
-                    <Text style={styles.treinoText}>{selectedTreino.name}</Text>
-                    {selectedTreino.exercises.map((exercise, idx) => (
-                      <Text key={idx} style={styles.exerciseText}>{exercise}</Text>
-                    ))}
-                  </View>
-                ) : (
-                  <Text style={styles.noTreinoText}>Selecione um treino para ver os detalhes.</Text>
-                )}
-              </View>
-            ) : (
-              <Text style={styles.noTreinoText}>Nenhum treino encontrado para o seu usuário.</Text>
-            )
+              ) : (
+                <Text style={styles.noTreinoText}>
+                  Selecione um treino para ver os detalhes.
+                </Text>
+              )}
+            </View>
+          ) : (
+            <Text style={styles.noTreinoText}>
+              Nenhum treino encontrado para o seu usuário.
+            </Text>
           )}
         </View>
       </KeyboardAvoidingView>
@@ -128,8 +132,7 @@ export default function Treino() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgb(7, 7, 7)",
-  },
+    backgroundColor: "rgb(7, 7, 7)",  },
   background: {
     flex: 1,
   },
@@ -137,61 +140,86 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     paddingHorizontal: 10,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
+    paddingTop: 30,
   },
   headerText: {
     marginBottom: 20,
   },
   pagTitle: {
-    color: "#fff",
-    fontWeight: 'bold',
-    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : 45,
-    marginBottom: 15,
+    color: "#00BB83",
+    fontWeight: "bold",
+    fontSize: width >= 800 ? 75 : width >= 550 ? 63 : width >= 480 ? 55 : 45,    marginBottom: 10,
   },
   pagDescription: {
-    color: "#fff",
-    fontSize: width >= 480 ? 20 : width >= 390 ? 16 : 14,
-    marginBottom: 20,
+    color: "#A0A0A0",
+    fontSize: width >= 480 ? 18 : width >= 390 ? 16 : 14,
+    marginBottom: 30,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    marginBottom: 20,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginBottom: 30,
   },
   selectButton: {
-    backgroundColor: '#00BB83',
-    padding: 10,
-    margin: 5,
-    borderRadius: 5,
+    backgroundColor: "linear-gradient(45deg, #00BB83, #00D4FF)",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    margin: 8,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   buttonText: {
     color: "#fff",
     textAlign: "center",
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "600",
   },
   treinoCard: {
-    marginBottom: 15,
-    backgroundColor: '#101010',
+    backgroundColor: "#101010",
     borderWidth: 1,
     borderColor: "#252525",
     padding: 20,
-    borderRadius: 8,
+    borderRadius: 12,
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
   },
   treinoText: {
     color: "#00BB83",
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 20,
+    fontWeight: "bold",
+    fontSize: 22,
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  exerciseItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  bulletPoint: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#00BB83",
+    marginRight: 10,
   },
   exerciseText: {
-    color: "#fff",
+    color: "#E0E0E0",
     fontSize: 16,
-    marginBottom: 5,
   },
   noTreinoText: {
-    color: "#fff",
+    color: "#A0A0A0",
     fontSize: 16,
     marginTop: 20,
-  }
+    textAlign: "center",
+  },
 });

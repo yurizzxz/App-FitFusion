@@ -16,12 +16,11 @@ export default function TabLayout() {
           tabBarStyle: {
             backgroundColor: '#0B0B0C',
             borderTopColor: 'transparent',
-            height: width >= 395 ? 70 : width >= 360 ? 70 : 58,
-            paddingHorizontal: 15,
+            height: 70,
+            paddingHorizontal: 5,
             position: 'absolute',
             borderRadius: 0,
             zIndex: 1000,
-            paddingTop: 12,
             borderWidth: 0
           },
           headerShown: false,

@@ -4,27 +4,29 @@
     "slug": "projetoepa",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo-verde.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/logo-branco.png",
-      "resizeMode": "contain"
-    },
+   "splash": {
+  "image": "./assets/images/logo-verde.png",
+  "resizeMode": "contain",
+  "backgroundColor": "#050505"
+},
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo-branco.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/logo-verde.png",
+        "backgroundColor": "#000000"
       },
-      "package": "com.yurizzxz.projetoepa"
+      "package": "com.yurizzxz.projetoepa",
+      "newArchEnabled": true
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/logo-branco.png"
+      "favicon": "./assets/images/logo-verde.png"
     },
     "plugins": [
       "expo-router",

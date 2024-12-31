@@ -205,6 +205,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     padding: 30,
+    paddingTop: 100,
     backgroundColor: "#00bb83",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,

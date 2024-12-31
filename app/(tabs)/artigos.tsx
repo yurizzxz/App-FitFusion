@@ -247,10 +247,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgb(7, 7, 7)",
   },
-
   configContainer: {
     width: '100%',
     flex: 1,
+    paddingTop: 30,
     paddingHorizontal: 10
   },
   headerText: {
