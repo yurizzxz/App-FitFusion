@@ -227,13 +227,15 @@ const styles = StyleSheet.create({
   eyeIcon: {
     position: "absolute",
     right: 30,
-    top: 42,
+    top: 22,
   },
   rememberMeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
     alignItems: "center",
+    paddingHorizontal: 5,
+    marginBottom: 10
   },
   rememberMeContainer: {
     flexDirection: "row",
@@ -278,7 +280,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 30,
+    top: 50,
     left: 20,
     zIndex: 10,
     width: 50,

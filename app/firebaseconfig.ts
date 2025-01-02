@@ -1,27 +1,30 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApp, getApps } from "firebase/app"; // importando getApps
 import { getAuth, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { config } from "react-native-dotenv"; 
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
+import { getFirestore, doc, getDoc, query, collection, where, getDocs } from "firebase/firestore";
+
+import Constants from 'expo-constants';
 
 const firebaseConfig = {
-  apiKey: config.FIREBASE_API_KEY,
-  authDomain: config.FIREBASE_AUTH_DOMAIN,
-  projectId: config.FIREBASE_PROJECT_ID,
-  storageBucket: config.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: config.FIREBASE_MESSAGING_SENDER_ID,
-  appId: config.FIREBASE_APP_ID,
+  apiKey: Constants.manifest.extra.firebaseApiKey,
+  authDomain: Constants.manifest.extra.firebaseAuthDomain,
+  projectId: Constants.manifest.extra.firebaseProjectId,
+  storageBucket: Constants.manifest.extra.firebaseStorageBucket,
+  messagingSenderId: Constants.manifest.extra.firebaseMessagingSenderId,
+  appId: Constants.manifest.extra.firebaseAppId
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 const auth = getAuth(app);
 
 auth.setPersistence(browserLocalPersistence)
-  .then(() => {})
+  .then(() => {
+  })
   .catch((error) => {
     console.error("Erro ao configurar persistência:", error);
   });
 
 const db = getFirestore(app);
 
-export { auth, db, doc, getDoc };
+export { auth, db, doc, getDoc, query, collection, where, getDocs };

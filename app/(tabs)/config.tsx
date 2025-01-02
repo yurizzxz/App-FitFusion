@@ -10,25 +10,42 @@ import {
   Modal,
   TextInput,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import { MaterialIcons } from "@expo/vector-icons";
 import {
   getAuth,
-  onAuthStateChanged,
   updateEmail,
-  updatePassword,
   signOut,
+  User as FirebaseUser,
 } from "firebase/auth";
 import { db } from "../firebaseconfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  DocumentSnapshot,
+  query,
+  collection,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
 import { useRouter } from "expo-router";
 
+interface UserData {
+  name: string;
+  email: string;
+  registeredAcademy?: string; 
+}
+
 const UserProfileScreen = () => {
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [registeredAcademy, setRegisteredAcademy] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [newName, setNewName] = useState<string>("");
+  const [newEmail, setNewEmail] = useState<string>("");
   const auth = getAuth();
   const router = useRouter();
   const user = auth.currentUser;
@@ -37,12 +54,48 @@ const UserProfileScreen = () => {
     const fetchUserData = async () => {
       if (user) {
         try {
-          const docRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const userData = docSnap.data();
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnap: DocumentSnapshot = await getDoc(userDocRef);
+
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data() as UserData;
             setUserName(userData.name || "Nome não disponível");
             setUserEmail(userData.email || "E-mail não disponível");
+
+            const profileImageUrl = userData.profileImage;
+
+            console.log("URL da imagem de perfil: ", profileImageUrl);
+
+            if (profileImageUrl) {
+              setProfileImage(profileImageUrl);
+            } else {
+              setProfileImage("https://via.placeholder.com/100");
+            }
+
+            const academyEmail = userData.registeredAcademy;
+
+            console.log("E-mail da academia: ", academyEmail);
+
+            if (academyEmail) {
+              const academyDocRef = query(
+                collection(db, "academias"),
+                where("ownerEmail", "==", academyEmail)
+              );
+              const querySnapshot = await getDocs(academyDocRef);
+
+              if (!querySnapshot.empty) {
+                querySnapshot.forEach((doc) => {
+                  const academyData = doc.data();
+                  setRegisteredAcademy(
+                    academyData?.name || "Academia não registrada"
+                  );
+                });
+              } else {
+                setRegisteredAcademy("Academia não encontrada");
+              }
+            } else {
+              setRegisteredAcademy("Academia não registrada");
+            }
           } else {
             console.log("Nenhum dado encontrado para este usuário");
           }
@@ -109,40 +162,52 @@ const UserProfileScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        <Image
-          source={{ uri: "https://via.placeholder.com/100" }}
-          style={styles.profileImage}
-        />
+        <TouchableOpacity
+          onPress={() => router.push("/notifications")}
+          style={styles.notificationIcon}
+        >
+          <MaterialIcons name="notifications-none" size={30} color="#fff" />
+        </TouchableOpacity>
+        <Image source={{ uri: profileImage }} style={styles.profileImage} />
+
         <Text style={styles.name}>{userName}</Text>
         <Text style={styles.role}>{userEmail}</Text>
+        <Text style={styles.role}>{registeredAcademy}</Text>
       </View>
-
-      <View style={styles.settingsContainer}>
-        <Text style={styles.settingsTitle}>Ações</Text>
-
-        {[
-          { title: "Editar Perfil", icon: "person" },
-          { title: "Notificações", icon: "notifications" },
-        ].map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.settingRow}
-            onPress={() => {
-              if (item.title === "Editar Perfil") {
-                setNewName(userName);
-                setNewEmail(userEmail);
-                setModalVisible(true);
-              }
-            }}
-          >
-            <Icon name={item.icon} size={24} color="#fff" />
-            <Text style={styles.settingText}>{item.title}</Text>
-            <Icon name="chevron-right" size={24} color="#252525" />
-          </TouchableOpacity>
-        ))}
-
+      <View style={{ padding: 10 }}>
+        <View style={styles.settingsContainer}>
+          {[{ title: "Dados Pessoais", icon: "person" }].map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.settingRow}
+              onPress={() => {
+                if (item.title === "Dados Pessoais") {
+                  setNewName(userName);
+                  setNewEmail(userEmail);
+                  setModalVisible(true);
+                }
+              }}
+            >
+              <MaterialIcons name={item.icon} size={24} color="#fff" />
+              <Text style={styles.settingText}>{item.title}</Text>
+              <MaterialIcons name="chevron-right" size={24} color="#252525" />
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.settingsContainer}>
+          {[{ title: "Reportar Erro", icon: "bug-report" }].map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.settingRow}
+              onPress={() => { router.push ("../reportError"); }}
+            >
+              <MaterialIcons name={item.icon} size={24} color="#fff" />
+              <Text style={styles.settingText}>{item.title}</Text>
+              <MaterialIcons name="chevron-right" size={24} color="#252525" />
+            </TouchableOpacity>
+          ))}
+        </View>
         <View>
           <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
             <Text style={styles.logoutButtonText}>Sair</Text>
@@ -158,7 +223,7 @@ const UserProfileScreen = () => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Editar Perfil</Text>
+            <Text style={styles.modalTitle}>Editar Informações</Text>
 
             <TextInput
               style={styles.input}
@@ -200,7 +265,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "rgb(7, 7, 7)",
-    padding: 10,
   },
   header: {
     alignItems: "center",
@@ -209,6 +273,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#00bb83",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    position: "relative",
+  },
+  notificationIcon: {
+    position: "absolute",
+    top: 35,
+    right: 10,
   },
   profileImage: {
     width: 100,
@@ -227,23 +297,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   settingsContainer: {
-    paddingHorizontal: 10,
-    marginTop: 30,
-  },
-  settingsTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#fff",
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    gap: 20,
+    borderWidth: 1,
+    backgroundColor: "#101010",
+    borderColor: "#252525",
+    marginTop: 20,
+    borderRadius: 10,
   },
   settingRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginVertical: 10,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#252525",
+    paddingVertical: 15,
   },
   settingText: {
     flex: 1,
@@ -305,8 +372,8 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     padding: 10,
-    marginTop: 10,
-    backgroundColor: "#f44336",
+    marginTop: 20,
+    backgroundColor: "#00bb83",
     borderRadius: 5,
     alignItems: "center",
   },
@@ -315,5 +382,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
 export default UserProfileScreen;

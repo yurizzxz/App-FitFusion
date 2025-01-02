@@ -26,6 +26,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarLabelStyle: {
             display: 'none',
+            
           },
           tabBarIconStyle: {
             position: 'relative',

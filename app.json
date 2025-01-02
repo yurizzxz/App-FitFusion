@@ -37,7 +37,13 @@
     },
     "extra": {
       "eas": {
-        "projectId": "05f32550-04a7-4ba9-a3d2-d24abad17d7b"
+        "projectId": "05f32550-04a7-4ba9-a3d2-d24abad17d7b",
+        "firebaseApiKey": "AIzaSyCbWio8rerVcId4k3WGDhrKuahOj2t2v9I",
+        "firebaseAuthDomain": "app-fitfusion.firebaseapp.com",
+        "firebaseProjectId": "app-fitfusion",
+        "firebaseStorageBucket": "app-fitfusion.appspot.com",
+        "firebaseMessagingSenderId": "61815565821",
+        "firebaseAppId": "1:61815565821:web:52334725ccd5c6896bbd94"
       }
     }
   }

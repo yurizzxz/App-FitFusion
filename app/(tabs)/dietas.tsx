@@ -65,7 +65,7 @@ export default function Dietas() {
           ]}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Dieta</Text>
+            <Text style={styles.title}>Dieta (Beta)</Text>
             <MaterialIcons
               name="notifications-none"
               size={30}
