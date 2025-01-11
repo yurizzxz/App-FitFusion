@@ -62,9 +62,16 @@ export default function Treino() {
               treinosAtualizados.push(...(data.workouts as Treino[]));
             }
           });
+
           setTreinos(treinosAtualizados);
+
+          // Seleciona automaticamente o primeiro treino, se houver
+          if (treinosAtualizados.length > 0) {
+            setSelectedTreino(treinosAtualizados[0]);
+          }
         } else {
           setTreinos(null);
+          setSelectedTreino(null);
         }
       });
 
@@ -159,7 +166,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 15,
     justifyContent: "space-between",
   },
   iconContainer: {
@@ -172,19 +179,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
   },
-  pagDescription: {
-    color: "#A0A0A0",
-    fontSize: width >= 480 ? 18 : width >= 390 ? 16 : 14,
-    marginBottom: 30,
-  },
   buttonContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    marginBottom: 30,
+    marginBottom: 15,
   },
   selectButton: {
-    backgroundColor: "linear-gradient(45deg, #00BB83, #00D4FF)",
+    backgroundColor: "#00BB83",
     paddingVertical: 12,
     paddingHorizontal: 20,
     margin: 8,
@@ -219,7 +221,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 22,
     marginBottom: 15,
-    textAlign: "center",
   },
   exerciseItem: {
     flexDirection: "row",

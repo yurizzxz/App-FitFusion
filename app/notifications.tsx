@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, StatusBar as RNStatusBar, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  StatusBar as RNStatusBar,
+  Alert,
+} from "react-native";
 import { useRouter } from "expo-router";
 import Constants from "expo-constants";
 import { MaterialIcons } from "@expo/vector-icons";
 import { db } from "./firebaseconfig";
 import { collection, query, where, onSnapshot, or } from "firebase/firestore";
-import { getAuth } from "firebase/auth"; 
+import { getAuth } from "firebase/auth";
 
 interface Notification {
   id: string;
@@ -19,7 +27,7 @@ export default function Notifications() {
   const statusBarHeight = Constants.statusBarHeight;
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const auth = getAuth();
-  const userEmail = auth.currentUser?.email; 
+  const userEmail = auth.currentUser?.email;
 
   const fetchNotifications = () => {
     if (!userEmail) {
@@ -33,8 +41,8 @@ export default function Notifications() {
       const q = query(
         notificationsRef,
         or(
-          where("userAttribute", "==", userEmail),
-          where("userAttribute", "==", "Todos")
+          where("userAttribute", "array-contains", userEmail),
+          where("userAttribute", "in", ["Todos", "todos"])
         )
       );
 
@@ -78,9 +86,16 @@ export default function Notifications() {
 
   return (
     <View style={styles.container}>
-      <RNStatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+      <RNStatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
+      />
       <View style={[styles.header, { paddingTop: statusBarHeight }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.goBackButton}
+        >
           <MaterialIcons name="arrow-back" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.pageTitle}>Notificações</Text>

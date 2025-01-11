@@ -27,14 +27,16 @@ import {
   collection,
   where,
   getDocs,
-  onSnapshot,
 } from "firebase/firestore";
 import { useRouter } from "expo-router";
+import Constants from "expo-constants";
+
+const statusBarHeight = Constants.statusBarHeight;
 
 interface UserData {
   name: string;
   email: string;
-  registeredAcademy?: string; 
+  registeredAcademy?: string;
 }
 
 const UserProfileScreen = () => {
@@ -64,8 +66,6 @@ const UserProfileScreen = () => {
 
             const profileImageUrl = userData.profileImage;
 
-            console.log("URL da imagem de perfil: ", profileImageUrl);
-
             if (profileImageUrl) {
               setProfileImage(profileImageUrl);
             } else {
@@ -73,8 +73,6 @@ const UserProfileScreen = () => {
             }
 
             const academyEmail = userData.registeredAcademy;
-
-            console.log("E-mail da academia: ", academyEmail);
 
             if (academyEmail) {
               const academyDocRef = query(
@@ -145,7 +143,7 @@ const UserProfileScreen = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push("/begin");
+      router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
       Alert.alert("Erro", "Houve um erro ao tentar fazer logout.");
@@ -154,18 +152,18 @@ const UserProfileScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View>
         <Text>Carregando...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.push("/notifications")}
-          style={styles.notificationIcon}
+          style={[styles.notificationIcon, { paddingTop: statusBarHeight }]}
         >
           <MaterialIcons name="notifications-none" size={30} color="#fff" />
         </TouchableOpacity>
@@ -196,19 +194,23 @@ const UserProfileScreen = () => {
           ))}
         </View>
         <View style={styles.settingsContainer}>
-          {[{ title: "Reportar Erro", icon: "bug-report" }].map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.settingRow}
-              onPress={() => { router.push ("../reportError"); }}
-            >
-              <MaterialIcons name={item.icon} size={24} color="#fff" />
-              <Text style={styles.settingText}>{item.title}</Text>
-              <MaterialIcons name="chevron-right" size={24} color="#252525" />
-            </TouchableOpacity>
-          ))}
+          {[{ title: "Reportar Erro", icon: "bug-report" }].map(
+            (item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.settingRow}
+                onPress={() => {
+                  router.push("../reportError");
+                }}
+              >
+                <MaterialIcons name={item.icon} size={24} color="#fff" />
+                <Text style={styles.settingText}>{item.title}</Text>
+                <MaterialIcons name="chevron-right" size={24} color="#252525" />
+              </TouchableOpacity>
+            )
+          )}
         </View>
-        <View>
+        <View style={{ paddingBottom: 70 }}>
           <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
             <Text style={styles.logoutButtonText}>Sair</Text>
           </TouchableOpacity>
@@ -240,7 +242,6 @@ const UserProfileScreen = () => {
               placeholder="Novo E-mail"
               placeholderTextColor="#888"
             />
-
             <TouchableOpacity
               style={styles.saveButton}
               onPress={handleConfirmSave}
@@ -262,8 +263,8 @@ const UserProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scrollContainer: {
+    flexGrow: 1,
     backgroundColor: "rgb(7, 7, 7)",
   },
   header: {
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   },
   notificationIcon: {
     position: "absolute",
-    top: 35,
+    top: 30,
     right: 10,
   },
   profileImage: {
@@ -310,7 +311,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
   settingText: {
     flex: 1,

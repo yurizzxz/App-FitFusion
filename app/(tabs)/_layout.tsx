@@ -16,8 +16,7 @@ export default function TabLayout() {
           tabBarStyle: {
             backgroundColor: '#0B0B0C',
             borderTopColor: 'transparent',
-            height: 70,
-            paddingHorizontal: 5,
+            height: 58,
             position: 'absolute',
             borderRadius: 0,
             zIndex: 1000,
@@ -26,10 +25,10 @@ export default function TabLayout() {
           headerShown: false,
           tabBarLabelStyle: {
             display: 'none',
-            
           },
           tabBarIconStyle: {
             position: 'relative',
+            top: -1.5
           },
         }}
       >
@@ -38,7 +37,7 @@ export default function TabLayout() {
           options={{
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
-                <TabBarIcon size={30} name={focused ? 'home' : 'home-outline'} color={color} />
+                <TabBarIcon size={25} name={focused ? 'home' : 'home-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
             ),
@@ -49,7 +48,7 @@ export default function TabLayout() {
           options={{
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
-                <TabBarIcon size={30} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
+                <TabBarIcon size={25} name={focused ? 'fast-food' : 'fast-food-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
             ),
@@ -60,7 +59,7 @@ export default function TabLayout() {
           options={{
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
-                <TabBarIcon size={30} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
+                <TabBarIcon size={25} name={focused ? 'barbell' : 'barbell-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
             ),
@@ -71,7 +70,7 @@ export default function TabLayout() {
           options={{
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
-                <TabBarIcon size={30} name={focused ? 'document' : 'document-outline'} color={color} />
+                <TabBarIcon size={25} name={focused ? 'document' : 'document-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
             ),
@@ -82,7 +81,7 @@ export default function TabLayout() {
           options={{
             tabBarIcon: ({ color, focused }) => (
               <View style={styles.iconContainer}>
-                <TabBarIcon size={30} name={focused ? 'person' : 'person-outline'} color={color} />
+                <TabBarIcon size={25} name={focused ? 'person' : 'person-outline'} color={color} />
                 {focused && <View style={styles.activeIndicator} />}
               </View>
             ),
@@ -109,6 +108,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#00BB83',
     borderRadius: 1.5,
     position: 'absolute',
-    bottom: -17,
+    bottom: -18,
   },
 });

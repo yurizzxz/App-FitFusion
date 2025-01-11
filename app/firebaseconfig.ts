@@ -3,15 +3,13 @@ import { getAuth, browserLocalPersistence } from "firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore, doc, getDoc, query, collection, where, getDocs } from "firebase/firestore";
 
-import Constants from 'expo-constants';
-
 const firebaseConfig = {
-  apiKey: Constants.manifest.extra.firebaseApiKey,
-  authDomain: Constants.manifest.extra.firebaseAuthDomain,
-  projectId: Constants.manifest.extra.firebaseProjectId,
-  storageBucket: Constants.manifest.extra.firebaseStorageBucket,
-  messagingSenderId: Constants.manifest.extra.firebaseMessagingSenderId,
-  appId: Constants.manifest.extra.firebaseAppId
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();

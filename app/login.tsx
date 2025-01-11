@@ -90,10 +90,6 @@ export default function Login() {
   return (
     <View style={styles.imgContainer}>
 
-      <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-        <Icon name="arrow-left" size={40} color="#fff" />
-      </TouchableOpacity>
-
       <KeyboardAvoidingView style={styles.background}>
         <View style={styles.configContainer}>
           <View style={styles.containerLogo}>
@@ -151,17 +147,6 @@ export default function Login() {
               <Text style={styles.submitText}>Entrar</Text>
             </TouchableOpacity>
 
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={goToSignUp}
-                style={styles.btnRegistrar}
-              >
-                <Text style={styles.registrarText}>
-                  Não possui uma conta?
-                  <Text style={{ color: "#00BB83" }}> Registre-se!</Text>
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
